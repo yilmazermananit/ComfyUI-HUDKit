@@ -148,7 +148,7 @@ def main():
         Image.fromarray((images[idx].clamp(0, 1) * 255).round().to(torch.uint8).numpy(), "RGB").save(
             os.path.join(docs, f"smoketest_{name}.png"))
     print(f"wrote {OUT} ({os.path.getsize(OUT)} bytes), audio={'yes' if ast else 'no'}")
-    print("wrote docs/real_first.png, docs/real_mid.png, docs/real_last.png")
+    print("wrote docs/smoketest_first/mid/last.png")
     return 0
 
 

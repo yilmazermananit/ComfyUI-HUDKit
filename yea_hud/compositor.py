@@ -477,7 +477,7 @@ def _draw_item(
         drew_target_asset = False
         if target_asset_id >= 0 and assets is not None and t_op > 0.0:
             # Size the reticle PNG to the crosshair span.
-            span = max(8, _crosshair_size(box, target_scale) * 2)
+            span = max(8, min(_crosshair_size(box, target_scale) * 2, int(H * 0.10)))
             patch = None
             try:
                 patch = assets.target_rgba(
@@ -492,7 +492,7 @@ def _draw_item(
                 drew_target_asset = True
 
         if not drew_target_asset and t_op > 0.0:
-            size = _crosshair_size(box, target_scale)
+            size = min(_crosshair_size(box, target_scale), int(H * 0.05))
             gap = max(1, int(round(size * 0.35)))
             procedural_hud.draw_crosshair(
                 draw,
@@ -514,12 +514,12 @@ def _draw_item(
         # Font size scales with the box height (clamped) and the user label_scale.
         # Child / micro_tag labels render a touch smaller for clear hierarchy.
         x1, y1, x2, y2 = box
-        bh = max(0.0, y2 - y1)
         label_style_name = getattr(item, "label_style", "solid_bar")
-        size_factor = 0.10 if label_style_name == "micro_tag" else 0.12
-        min_size = 8 if label_style_name == "micro_tag" else 10
-        base_size = bh * size_factor
-        font_size = int(max(min_size, round(base_size * max(0.1, label_scale))))
+        # Uniform SMALL labels (editorial HUD): size scales with FRAME height, NOT box
+        # height, so a large box never gets a giant caption. Tight cap; micro tags smaller.
+        _frac = 0.016 if label_style_name == "micro_tag" else 0.019
+        _lo, _hi = (9, 15) if label_style_name == "micro_tag" else (11, 21)
+        font_size = int(min(_hi, max(_lo, round(H * _frac * max(0.4, label_scale)))))
         font = text_render.get_font(font_size, font_path=font_path)
 
         # Truncate to a width budget: the pre-resolved label rect (from the

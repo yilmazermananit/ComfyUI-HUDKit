@@ -97,17 +97,26 @@ def main():
     ap = _load_file_module("yea_asset_pack", "nodes/asset_pack.py")
 
     print("device:", mm.get_torch_device())
-    frames, fps, W, H = decode(SRC, N_FRAMES, TARGET_W)
-    print(f"decoded {frames.shape[0]} frames {W}x{H} @ {fps}fps")
-
-    print("loading SAM3 checkpoint…")
-    model, clip, _vae = CheckpointLoaderSimple().load_checkpoint(ckpt_name=CKPT)
-    cond = CLIPTextEncode().encode(clip=clip, text=PROMPT)[0]
-
-    print("running SAM3 Video Track (real)…")
-    no = SAM3_VideoTrack.execute(images=frames, model=model, conditioning=cond,
-                                 detection_threshold=0.5, max_objects=8, detect_interval=1)
-    track_data = _node_output_first(no)
+    # Cache the (slow) decode + SAM3 result so HUD visuals can be iterated fast.
+    cache = os.path.join(PROJ, "examples", ".sam3_cache.pt")
+    if os.path.exists(cache):
+        print("loading cached frames + REAL SAM3 track_data…")
+        blob = torch.load(cache, weights_only=False)
+        frames, fps, W, H, track_data = blob["frames"], blob["fps"], blob["W"], blob["H"], blob["track_data"]
+    else:
+        frames, fps, W, H = decode(SRC, N_FRAMES, TARGET_W)
+        print(f"decoded {frames.shape[0]} frames {W}x{H} @ {fps}fps")
+        print("loading SAM3 checkpoint…")
+        model, clip, _vae = CheckpointLoaderSimple().load_checkpoint(ckpt_name=CKPT)
+        cond = CLIPTextEncode().encode(clip=clip, text=PROMPT)[0]
+        print("running SAM3 Video Track (real)…")
+        no = SAM3_VideoTrack.execute(images=frames, model=model, conditioning=cond,
+                                     detection_threshold=0.5, max_objects=8, detect_interval=1)
+        track_data = _node_output_first(no)
+        td_cpu = {k: (v.cpu() if hasattr(v, "cpu") else v) for k, v in track_data.items()}
+        torch.save({"frames": frames, "fps": fps, "W": W, "H": H, "track_data": td_cpu}, cache)
+        track_data = td_cpu
+    pm = track_data.get("packed_masks")
     pm = track_data.get("packed_masks")
     print("REAL track_data: packed_masks=",
           (tuple(pm.shape), str(pm.dtype)) if pm is not None else None,
