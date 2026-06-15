@@ -60,7 +60,8 @@ def _load_my_specs():
     from nodes.annotation_builder import YEAAnnotationBuilder
     from nodes.track_crop_extractor import YEATrackCropExtractor
     from nodes.detailed_label_prompt import YEADetailedLabelPrompt
-    classes = [YEAHUDRenderer, YEAInspectSAM3TrackData, YEAInspectBoundingBoxes,
+    from nodes.asset_pack import YEAHUDAssetPack
+    classes = [YEAHUDRenderer, YEAHUDAssetPack, YEAInspectSAM3TrackData, YEAInspectBoundingBoxes,
                YEAMaskToNativeBBoxes, YEAAnnotationJSON, YEAAnnotationBuilder,
                YEATrackCropExtractor, YEADetailedLabelPrompt]
     specs = {}
@@ -268,6 +269,34 @@ def build_dense_multi(specs):
     return g
 
 
+def build_real_video_sam3(specs):
+    """The real production graph: video -> SAM3 Video Track -> Asset Pack -> Renderer
+    (track_random + Tektur) -> Create Video (audio+fps) -> Save. Run with a SAM3 model."""
+    g = Graph(specs)
+    ckpt = g.add("CheckpointLoaderSimple", pos=(0, 0), widget_values=["sam3.safetensors"])
+    lv = g.add("LoadVideo", pos=(0, 200))
+    gvc = g.add("GetVideoComponents", pos=(340, 200))
+    clip = g.add("CLIPTextEncode", pos=(340, 0), widget_values=["person"])
+    track = g.add("SAM3_VideoTrack", pos=(700, 60), widget_values=[0.5, 8, 1])
+    ap = g.add("YEAHUDAssetPack", pos=(700, 320), widget_values=["yea_assets", 0.45])
+    rend = g.add("YEAHUDRenderer", pos=(1060, 60), widget_values=_renderer_widget_values(specs))
+    cv = g.add("CreateVideo", pos=(1420, 60), widget_values=[24.0, 8])
+    sv = g.add("SaveVideo", pos=(1760, 60))
+    g.connect(ckpt, "MODEL", track, "model")
+    g.connect(ckpt, "CLIP", clip, "clip")
+    g.connect(lv, "VIDEO", gvc, "video")
+    g.connect(gvc, "IMAGE", track, "images")
+    g.connect(clip, "CONDITIONING", track, "conditioning")
+    g.connect(gvc, "IMAGE", rend, "frames")
+    g.connect(track, "track_data", rend, "track_data")
+    g.connect(ap, "asset_pack", rend, "asset_pack")
+    g.connect(rend, "images", cv, "images")
+    g.connect(gvc, "AUDIO", cv, "audio")
+    g.connect_widget(gvc, "FLOAT", cv, "fps", "FLOAT")
+    g.connect(cv, "VIDEO", sv, "video")
+    return g
+
+
 def validate(graph_dict, specs):
     """Re-check: every node type registered; every link type-consistent."""
     issues = []
@@ -293,6 +322,7 @@ def main():
         "manual_annotation_workflow.json": build_manual_annotation,
         "vlm_annotation_workflow.json": build_vlm_annotation,
         "dense_multi_category_workflow.json": build_dense_multi,
+        "real_video_sam3_workflow.json": build_real_video_sam3,
     }
     all_ok = True
     for fn, builder in builders.items():
