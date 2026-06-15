@@ -7,9 +7,13 @@ comfy_entrypoint, so we define ONLY ONE of them depending on what's available.
 Business logic lives in ``yea_hud``; this file does registration only.
 
 ComfyUI loads custom-node packages via ``importlib.spec_from_file_location`` under a
-mangled module name and does NOT add the package directory to ``sys.path``. Our
-node modules use absolute imports (``from yea_hud import ...``), so we insert the
-package directory onto ``sys.path`` first — the standard custom-node pattern.
+mangled module name and does NOT add the package directory to ``sys.path``. Two
+consequences handled here:
+  * the ``nodes`` subpackage is imported RELATIVELY (``from .nodes...``) — an absolute
+    ``import nodes`` would collide with ComfyUI's own top-level ``nodes.py``;
+  * the ``yea_hud`` business package is imported absolutely by the node modules, so we
+    insert this package directory onto ``sys.path`` first (the standard pattern;
+    ``yea_hud`` is unique so it cannot clash with core modules).
 """
 
 import logging
@@ -34,14 +38,14 @@ except Exception:  # pragma: no cover - exercised on old ComfyUI
     _HAS_V3 = False
 
 if _HAS_V3:
-    from nodes.hud_renderer import NODE as _Renderer
-    from nodes.inspect_track_data import NODE as _InspectTrack
-    from nodes.inspect_bbox import NODE as _InspectBBox
-    from nodes.mask_to_bbox import NODE as _MaskToBBox
-    from nodes.annotation_json import NODE as _AnnotationJSON
-    from nodes.annotation_builder import NODE as _AnnotationBuilder
-    from nodes.track_crop_extractor import NODE as _CropExtractor
-    from nodes.detailed_label_prompt import NODE as _LabelPrompt
+    from .nodes.hud_renderer import NODE as _Renderer
+    from .nodes.inspect_track_data import NODE as _InspectTrack
+    from .nodes.inspect_bbox import NODE as _InspectBBox
+    from .nodes.mask_to_bbox import NODE as _MaskToBBox
+    from .nodes.annotation_json import NODE as _AnnotationJSON
+    from .nodes.annotation_builder import NODE as _AnnotationBuilder
+    from .nodes.track_crop_extractor import NODE as _CropExtractor
+    from .nodes.detailed_label_prompt import NODE as _LabelPrompt
 
     _NODES = [n for n in (_Renderer, _InspectTrack, _InspectBBox, _MaskToBBox,
                           _AnnotationJSON, _AnnotationBuilder, _CropExtractor, _LabelPrompt)
@@ -57,7 +61,7 @@ if _HAS_V3:
     __all__ += ["comfy_entrypoint"]
     logger.info("ComfyUI-YEAHUD: registered %d V3 nodes (category YEA/HUD).", len(_NODES))
 else:
-    from nodes.v1_compat import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS  # noqa: F401
+    from .nodes.v1_compat import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS  # noqa: F401
 
     __all__ += ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
     logger.info("ComfyUI-YEAHUD: comfy_api V3 unavailable; registered V1 NODE_CLASS_MAPPINGS.")
