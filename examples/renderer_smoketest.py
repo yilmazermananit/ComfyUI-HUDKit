@@ -1,11 +1,13 @@
-"""End-to-end render on a REAL video (decoded frames + original audio/fps preserved).
+"""RENDERER SMOKE TEST — NOT a SAM3 integration test.
 
-NOTE on tracking: real SAM3 Video Track needs the SAM3 checkpoint (not on this disk),
-so this script uses a STAND-IN track over the centred subject to exercise the full
-render path on real footage (asset compositing, Tektur, track_random colors, per-asset
-opacity, stable IDs, audio+fps mux, first/mid/last PNGs). The shipped
-`examples/real_video_sam3_workflow.json` is the real SAM3 pipeline to run in ComfyUI
-once the model is present. Replace SRC with any local clip.
+Renders on a real decoded video with a STAND-IN track (a synthetic centred box) to
+exercise the render path on real footage: asset compositing, Tektur, track_random
+colors, per-asset opacity, stable IDs, audio+fps mux, first/mid/last PNGs. It does NOT
+run SAM3 and the box does NOT follow the real subject.
+
+The REAL SAM3 integration test = run `examples/real_video_sam3_workflow.json` in ComfyUI
+>=0.20.1 with `models/checkpoints/sam3.1_multiplex_fp16.safetensors` (Comfy-Org/sam3.1):
+Load Video -> SAM3 Video Track -> YEA HUD Renderer -> Create Video. Replace SRC with any clip.
 """
 from __future__ import annotations
 
@@ -30,7 +32,7 @@ from nodes.asset_pack import run_asset_pack, _load_pair_from_file
 
 SRC = os.path.expanduser(
     "~/Downloads/magnific_langr-adam-topa-vursun-sadece-sound-fx-olsun-mzik-_kling_4K_21-9_24fps_8724.mp4")
-OUT = os.path.join(_HERE, "real_video_output.mp4")
+OUT = os.path.join(_HERE, "renderer_smoketest_output.mp4")
 TARGET_W = 1280
 ASSET_DIR = os.path.join(_HERE, "assets")
 FRAME_FILES = [f"Untitled-1_Frame {i}.png" for i in range(1, 7)]
@@ -144,7 +146,7 @@ def main():
     docs = os.path.join(_ROOT, "docs")
     for name, idx in (("first", 0), ("mid", B // 2), ("last", B - 1)):
         Image.fromarray((images[idx].clamp(0, 1) * 255).round().to(torch.uint8).numpy(), "RGB").save(
-            os.path.join(docs, f"real_{name}.png"))
+            os.path.join(docs, f"smoketest_{name}.png"))
     print(f"wrote {OUT} ({os.path.getsize(OUT)} bytes), audio={'yes' if ast else 'no'}")
     print("wrote docs/real_first.png, docs/real_mid.png, docs/real_last.png")
     return 0
