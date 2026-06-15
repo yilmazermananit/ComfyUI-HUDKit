@@ -287,14 +287,14 @@ class YEAHUDAssetPackV1:
     @classmethod
     def INPUT_TYPES(cls):
         opt = {"folder": ("STRING", {"default": ""}),
-               "solid_opacity": ("FLOAT", {"default": 0.45, "min": 0.0, "max": 1.0, "step": 0.05})}
+               "solid_opacity": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05})}
         for i in range(1, 7):
             opt[f"frame_{i}_image"] = ("IMAGE",); opt[f"frame_{i}_mask"] = ("MASK",)
         for i in range(1, 3):
             opt[f"target_{i}_image"] = ("IMAGE",); opt[f"target_{i}_mask"] = ("MASK",)
         return {"required": {}, "optional": opt}
 
-    def run(self, folder="", solid_opacity=0.45, **manual):
+    def run(self, folder="", solid_opacity=0.0, **manual):
         return (run_asset_pack(folder, manual, solid_opacity),)
 
 

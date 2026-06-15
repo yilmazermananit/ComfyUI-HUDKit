@@ -62,27 +62,29 @@ def _scan_folder(folder):
     return frames[:6], targets[:2]
 
 
-def _dim_if_solid(pair, solid_opacity, threshold=0.35):
-    """Auto-translucency: a SOLID frame asset (high alpha coverage, e.g. a filled block)
-    is dimmed to ``solid_opacity`` so it doesn't bury the footage; line-art / bracket /
-    outline designs (low coverage) are left fully opaque. Returns a (image, mask) pair."""
-    if pair is None or solid_opacity >= 0.999:
+def _handle_solid(pair, solid_opacity, threshold=0.30):
+    """A SOLID / filled frame asset (high alpha coverage, e.g. a filled block) would
+    bury the footage with interior colour. Default (``solid_opacity<=0``) DROPS it so the
+    box interior stays transparent — brackets / outlines / line-art (low coverage) are
+    always kept. A positive ``solid_opacity`` keeps the fill but translucent instead."""
+    if pair is None:
         return pair
-    import torch
     img, mask = pair
     if mask is None:
         return pair
     alpha = 1.0 - mask.float()
     coverage = float((alpha > 0.5).float().mean())
     if coverage <= threshold:
-        return pair
-    new_mask = 1.0 - (alpha * float(solid_opacity))
-    return img, new_mask
+        return pair                       # bracket / outline / line-art -> keep
+    if solid_opacity <= 0.0:
+        return None                       # solid/filled -> drop (no interior colour)
+    return img, 1.0 - (alpha * float(solid_opacity))
 
 
-def run_asset_pack(folder="", manual=None, solid_opacity=0.45):
+def run_asset_pack(folder="", manual=None, solid_opacity=0.0):
     """Build the asset_pack dict. ``manual`` maps slot name -> tensor (frame_1_image …).
-    Solid frame assets are auto-dimmed to ``solid_opacity`` (1.0 disables)."""
+    Solid/filled frame assets are DROPPED by default (no interior colour); set
+    ``solid_opacity>0`` to keep them as a translucent fill instead."""
     manual = manual or {}
     frame_pairs, target_pairs = [None] * 6, [None] * 2
     for i in range(6):
@@ -103,7 +105,7 @@ def run_asset_pack(folder="", manual=None, solid_opacity=0.45):
     for i in range(2):
         if target_pairs[i] is None:
             target_pairs[i] = next(ti, None)
-    frame_pairs = [_dim_if_solid(p, solid_opacity) for p in frame_pairs]
+    frame_pairs = [_handle_solid(p, solid_opacity) for p in frame_pairs]
     n_f = sum(p is not None for p in frame_pairs)
     n_t = sum(p is not None for p in target_pairs)
     logger.info("YEA HUD Asset Pack: %d frame + %d target assets (solid_opacity=%.2f).",
@@ -123,7 +125,7 @@ try:
             ins = [io.String.Input("folder", default="", optional=True,
                                    tooltip="Subfolder of ComfyUI's input/ dir. PNGs auto-load; "
                                            "names with 'target' → target points, rest → frames."),
-                   io.Float.Input("solid_opacity", default=0.45, min=0.0, max=1.0, step=0.05, optional=True,
+                   io.Float.Input("solid_opacity", default=0.0, min=0.0, max=1.0, step=0.05, optional=True,
                                   tooltip="Opacity for SOLID/filled frame assets (auto-detected). "
                                           "Brackets/outlines stay fully opaque. 1.0 disables.")]
             for i in range(1, 7):
@@ -143,7 +145,7 @@ try:
             )
 
         @classmethod
-        def execute(cls, folder="", solid_opacity=0.45, **manual) -> io.NodeOutput:
+        def execute(cls, folder="", solid_opacity=0.0, **manual) -> io.NodeOutput:
             return io.NodeOutput(run_asset_pack(folder, manual, solid_opacity))
 
     NODE = YEAHUDAssetPack

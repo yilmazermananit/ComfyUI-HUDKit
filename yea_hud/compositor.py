@@ -522,14 +522,11 @@ def _draw_item(
         font_size = int(min(_hi, max(_lo, round(H * _frac * max(0.4, label_scale)))))
         font = text_render.get_font(font_size, font_path=font_path)
 
-        # Truncate to a width budget: the pre-resolved label rect (from the
-        # renderer's placement engine) if present, else the box / frame width.
+        # Truncate so the strip can NEVER exceed the frame width (robust to long text,
+        # tiny boxes, or boxes pushed off-frame). At least the box width or 20% of the
+        # frame, hard-capped at the frame width minus a margin.
         bw = max(0.0, x2 - x1)
-        pre = getattr(item, "label_rect", None)
-        if pre is not None:
-            max_text_w = int(max(8, (pre[2] - pre[0]) - 6))
-        else:
-            max_text_w = int(max(8, (bw if bw > 8.0 else float(W)) - 8))
+        max_text_w = int(min(W - 6, max(bw, W * 0.20)))
         fitted = text_render.truncate_ellipsis(label_text, font, max_text_w)
 
         # Strip background: a child/category override colour when provided, else the
@@ -552,15 +549,17 @@ def _draw_item(
             bg_rgb=strip_bg,
             bg_opacity=strip_alpha,
         )
-        # Placement: honour the renderer's pre-resolved rect (collision/temporal
-        # engine); otherwise fall back to the track's preferred side, clamped.
+        # Placement: ALWAYS at the box top, then SHIFTED fully inside the frame (a pure
+        # translation — never squashed or clipped). Robust even when the box is huge,
+        # edge-touching, or pushed off-frame: the strip is guaranteed fully visible.
         sh, sw = strip.shape[0], strip.shape[1]
-        if pre is not None:
-            rx1, ry1 = float(pre[0]), float(pre[1])
-        else:
-            side = getattr(style, "caption_side", "top")
-            rect, _resolved = geometry.label_rect(box, sw, sh, W, H, side)
-            rx1, ry1, _rx2, _ry2 = rect
+        gap = 3
+        rx1 = float(x1)
+        ry1 = float(y1) - sh - gap
+        if ry1 < 2.0:                       # box hugs the frame top -> drop label just inside it
+            ry1 = float(y1) + gap
+        rx1 = max(2.0, min(rx1, W - sw - 2))
+        ry1 = max(2.0, min(ry1, H - sh - 2))
         _blit_rgba(layer, strip, int(round(rx1)), int(round(ry1)))
 
     # ----- 5. MICRO DETAILS (registration marks) -------------------------

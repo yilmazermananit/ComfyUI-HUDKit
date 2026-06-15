@@ -112,7 +112,7 @@ def main():
         frames, track_data=track_data, annotations_json=json.dumps(annotations),
         seed=77, style_mode="mixed", max_objects=24, display_probability=1.0, padding_x=10, padding_y=10,
         smoothing=0.6, track_iou_threshold=0.25, track_memory_frames=8, frame_opacity=1.0,
-        fill_opacity=0.22, label_opacity=0.92, line_width=2, target_scale=0.34,
+        fill_opacity=0.0, label_opacity=0.92, line_width=2, target_scale=0.34,
         caption_mode="mixed", label_length_mode="adaptive", show_child_annotations=True,
         show_action_label=True, color_mode="track_random", asset_pack=asset_pack)
     print("tracking:", tj)

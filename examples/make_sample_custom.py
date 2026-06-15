@@ -89,7 +89,7 @@ def main():
         frames, track_data=track_data, annotations_json=json.dumps(annotations),
         seed=77, style_mode="assets_only", max_objects=24, display_probability=1.0,
         padding_x=10, padding_y=10, smoothing=0.55, track_iou_threshold=0.25, track_memory_frames=6,
-        frame_opacity=1.0, fill_opacity=0.22, label_opacity=0.92, line_width=2, target_scale=0.42,
+        frame_opacity=1.0, fill_opacity=0.0, label_opacity=0.92, line_width=2, target_scale=0.42,
         caption_mode="detailed", label_length_mode="adaptive", show_child_annotations=True,
         show_action_label=True, color_mode="category_based", primary_group_label="PERSON",
         frame_images=fimg, frame_masks=fmsk, target_images=timg, target_masks=tmsk)
