@@ -46,8 +46,9 @@ if _HAS_V3:
     from .nodes.annotation_builder import NODE as _AnnotationBuilder
     from .nodes.track_crop_extractor import NODE as _CropExtractor
     from .nodes.detailed_label_prompt import NODE as _LabelPrompt
+    from .nodes.asset_pack import NODE as _AssetPack
 
-    _NODES = [n for n in (_Renderer, _InspectTrack, _InspectBBox, _MaskToBBox,
+    _NODES = [n for n in (_Renderer, _AssetPack, _InspectTrack, _InspectBBox, _MaskToBBox,
                           _AnnotationJSON, _AnnotationBuilder, _CropExtractor, _LabelPrompt)
               if n is not None]
 

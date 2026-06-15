@@ -22,6 +22,7 @@ from .annotation_json import run_annotation_json, DISPLAY_NAME as AJ_NAME, NODE_
 from .annotation_builder import run_annotation_builder, DISPLAY_NAME as AB_NAME, NODE_ID as AB_ID
 from .track_crop_extractor import run_track_crop_extractor, DISPLAY_NAME as CE_NAME, NODE_ID as CE_ID
 from .detailed_label_prompt import run_detailed_label_prompt, DISPLAY_NAME as LP_NAME, NODE_ID as LP_ID
+from .asset_pack import run_asset_pack, DISPLAY_NAME as AP_NAME, NODE_ID as AP_ID
 
 ANN_CAT = "YEA/HUD/Annotation"
 _F = lambda v: ("FLOAT", {"default": v, "min": 0.0, "max": 1.0, "step": 0.01})
@@ -81,6 +82,7 @@ class YEAHUDRendererV1:
             "annotation_priority_threshold": ("INT", {"default": 0, "min": 0, "max": 200}),
             "color_mode": (COLOR_MODES, {"default": "track_random"}),
             "font": ("STRING", {"default": ""}),
+            "asset_pack": ("YEA_HUD_ASSET_PACK",),
             "caption_source": (list(CAPTION_SOURCES), {"default": "fixed"}),
             "fixed_label": ("STRING", {"default": "PERSON"}),
             "captions_json": ("STRING", {"default": "", "multiline": True}),
@@ -112,7 +114,7 @@ class YEAHUDRendererV1:
             caption_mode="auto", label_length_mode="adaptive", label_collision_mode="reposition_and_shorten",
             label_density=1.0, max_labels_per_frame=0, show_child_annotations=True, show_action_label=True,
             show_context_label=False, show_confidence=False, show_track_id=False,
-            annotation_priority_threshold=0, color_mode="track_random", font="", caption_source="fixed",
+            annotation_priority_threshold=0, color_mode="track_random", font="", asset_pack=None, caption_source="fixed",
             fixed_label="PERSON", captions_json="", caption_template="{track:02d}. {label}", palette_json="",
             small_object_mode="target_only", label_text_color_mode="auto", asset_fit_mode="stretch",
             trim_transparent_assets=True, padding_mode="pixels", flicker_probability=0.04,
@@ -146,7 +148,7 @@ class YEAHUDRendererV1:
             show_confidence=show_confidence, show_track_id=show_track_id,
             show_child_annotations=show_child_annotations, show_action_label=show_action_label,
             show_context_label=show_context_label, annotation_priority_threshold=annotation_priority_threshold,
-            color_mode=color_mode, font=font, progress=pbar,
+            color_mode=color_mode, font=font, asset_pack=asset_pack, progress=pbar,
             interrupt=mm.throw_exception_if_processing_interrupted)
 
 
@@ -278,9 +280,26 @@ class YEADetailedLabelPromptV1:
                                          include_objects, include_scene, include_visible_details,
                                          maximum_words, uppercase)
 
+class YEAHUDAssetPackV1:
+    CATEGORY = CATEGORY; FUNCTION = "run"
+    RETURN_TYPES = ("YEA_HUD_ASSET_PACK",); RETURN_NAMES = ("asset_pack",)
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        opt = {"folder": ("STRING", {"default": ""})}
+        for i in range(1, 7):
+            opt[f"frame_{i}_image"] = ("IMAGE",); opt[f"frame_{i}_mask"] = ("MASK",)
+        for i in range(1, 3):
+            opt[f"target_{i}_image"] = ("IMAGE",); opt[f"target_{i}_mask"] = ("MASK",)
+        return {"required": {}, "optional": opt}
+
+    def run(self, folder="", **manual):
+        return (run_asset_pack(folder, manual),)
+
 
 NODE_CLASS_MAPPINGS = {
     R_ID: YEAHUDRendererV1,
+    AP_ID: YEAHUDAssetPackV1,
     IT_ID: YEAInspectSAM3TrackDataV1,
     IB_ID: YEAInspectBoundingBoxesV1,
     M_ID: YEAMaskToNativeBBoxesV1,
@@ -290,6 +309,6 @@ NODE_CLASS_MAPPINGS = {
     LP_ID: YEADetailedLabelPromptV1,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
-    R_ID: R_NAME, IT_ID: IT_NAME, IB_ID: IB_NAME, M_ID: M_NAME,
+    R_ID: R_NAME, AP_ID: AP_NAME, IT_ID: IT_NAME, IB_ID: IB_NAME, M_ID: M_NAME,
     AJ_ID: AJ_NAME, AB_ID: AB_NAME, CE_ID: CE_NAME, LP_ID: LP_NAME,
 }

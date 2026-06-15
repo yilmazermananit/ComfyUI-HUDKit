@@ -263,16 +263,6 @@
           "link": null
         },
         {
-          "name": "secondary_track_data_2",
-          "type": "SAM3_TRACK_DATA",
-          "link": null
-        },
-        {
-          "name": "secondary_track_data_3",
-          "type": "SAM3_TRACK_DATA",
-          "link": null
-        },
-        {
           "name": "bboxes",
           "type": "BOUNDING_BOX",
           "link": null
@@ -288,83 +278,8 @@
           "link": null
         },
         {
-          "name": "frame_1_image",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "frame_1_mask",
-          "type": "MASK",
-          "link": null
-        },
-        {
-          "name": "frame_2_image",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "frame_2_mask",
-          "type": "MASK",
-          "link": null
-        },
-        {
-          "name": "frame_3_image",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "frame_3_mask",
-          "type": "MASK",
-          "link": null
-        },
-        {
-          "name": "frame_4_image",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "frame_4_mask",
-          "type": "MASK",
-          "link": null
-        },
-        {
-          "name": "frame_5_image",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "frame_5_mask",
-          "type": "MASK",
-          "link": null
-        },
-        {
-          "name": "frame_6_image",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "frame_6_mask",
-          "type": "MASK",
-          "link": null
-        },
-        {
-          "name": "target_1_image",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "target_1_mask",
-          "type": "MASK",
-          "link": null
-        },
-        {
-          "name": "target_2_image",
-          "type": "IMAGE",
-          "link": null
-        },
-        {
-          "name": "target_2_mask",
-          "type": "MASK",
+          "name": "asset_pack",
+          "type": "YEA_HUD_ASSET_PACK",
           "link": null
         }
       ],
@@ -410,8 +325,6 @@
         0.18,
         1.0,
         "PERSON",
-        "",
-        "",
         "",
         "",
         "auto",

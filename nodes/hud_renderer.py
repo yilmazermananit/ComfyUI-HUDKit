@@ -183,7 +183,7 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
                      show_confidence=False, show_track_id=False, show_category=False,
                      show_child_annotations=True, show_action_label=True, show_context_label=False,
                      secondary_annotation_scale=0.6, annotation_priority_threshold=0,
-                     color_mode="track_random", font="",
+                     color_mode="track_random", font="", asset_pack=None,
                      progress=None, interrupt=None):
     """Render HUD overlays. Returns (images, debug_preview, tracking_json_str)."""
     import torch  # noqa: F401
@@ -222,8 +222,14 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
         groups, bboxes, masks, B, W, H, default_category)
     dets = _align_to_batch(dets, B, meta)
 
-    frame_pairs = list(zip(frame_images or [], frame_masks or []))
-    target_pairs = list(zip(target_images or [], target_masks or []))
+    # Assets come from a single asset_pack (preferred, collapses 16 sockets) or the
+    # individual image/mask lists (used by tests / make_sample).
+    if asset_pack:
+        frame_pairs = asset_pack.get("frame_pairs", []) or []
+        target_pairs = asset_pack.get("target_pairs", []) or []
+    else:
+        frame_pairs = list(zip(frame_images or [], frame_masks or []))
+        target_pairs = list(zip(target_images or [], target_masks or []))
     assets = AssetBank(frame_pairs, target_pairs, trim=trim_transparent_assets,
                        fit_frame=asset_fit_mode, fit_target="contain", max_cache_items=max_cache_items)
 
@@ -443,6 +449,7 @@ try:
 
     SAM3TrackData = io.Custom(TRACK_DATA_TYPE)
     YEAAnnotations = io.Custom(ANNOTATIONS_TYPE)
+    YEAAssetPack = io.Custom("YEA_HUD_ASSET_PACK")
     LABEL_LENGTH_MODES = ["single_line", "two_line", "truncate", "adaptive"]
     COLOR_MODES = ["track_random", "category_based", "source_based", "fixed_palette", "annotation_override"]
 
@@ -491,12 +498,8 @@ try:
                     # --- tracking sources (priority track_data > bboxes > masks) ---
                     SAM3TrackData.Input("track_data", optional=True, tooltip="PREFERRED primary SAM3_TRACK_DATA."),
                     SAM3TrackData.Input("secondary_track_data_1", optional=True, tooltip="Optional 2nd SAM3 group (e.g. face)."),
-                    SAM3TrackData.Input("secondary_track_data_2", optional=True),
-                    SAM3TrackData.Input("secondary_track_data_3", optional=True),
                     io.String.Input("primary_group_label", default="PERSON", optional=True),
                     io.String.Input("secondary_group_label_1", default="", optional=True),
-                    io.String.Input("secondary_group_label_2", default="", optional=True),
-                    io.String.Input("secondary_group_label_3", default="", optional=True),
                     io.BoundingBox.Input("bboxes", optional=True, force_input=True, tooltip="Fallback BOUNDING_BOX."),
                     io.Mask.Input("masks", optional=True, tooltip="Fallback / supplementary MASK."),
                     # --- annotations (semantic labels) ---
@@ -518,7 +521,8 @@ try:
                     io.Combo.Input("color_mode", options=COLOR_MODES, default="track_random", optional=True),
                     io.String.Input("font", default="", optional=True,
                                     tooltip="Label font: a filename in yea_hud/fonts/ or an absolute .ttf/.otf path. Empty = bundled/system default."),
-                    *_asset_inputs(),
+                    YEAAssetPack.Input("asset_pack", optional=True,
+                                       tooltip="From 'YEA HUD Asset Pack' — your 6 frame + 2 target PNGs in one input."),
                     # --- captions (fallback when no annotations) / palette ---
                     io.Combo.Input("caption_source", options=list(CAPTION_SOURCES), default="fixed", optional=True),
                     io.String.Input("fixed_label", default="PERSON", optional=True),
@@ -545,9 +549,8 @@ try:
         def execute(cls, frames, seed, style_mode, max_objects, display_probability, padding_x,
                     padding_y, smoothing, track_iou_threshold, track_memory_frames, frame_opacity,
                     fill_opacity, label_opacity, line_width, target_scale, label_scale=1.0,
-                    track_data=None, secondary_track_data_1=None, secondary_track_data_2=None,
-                    secondary_track_data_3=None, primary_group_label="PERSON",
-                    secondary_group_label_1="", secondary_group_label_2="", secondary_group_label_3="",
+                    track_data=None, secondary_track_data_1=None, primary_group_label="PERSON",
+                    secondary_group_label_1="",
                     bboxes=None, masks=None, annotations=None, annotations_json="", caption_mode="auto",
                     label_length_mode="adaptive", label_collision_mode="reposition_and_shorten",
                     label_density=1.0, max_labels_per_frame=0, show_child_annotations=True,
@@ -557,13 +560,13 @@ try:
                     captions_json="", caption_template="{track:02d}. {label}", palette_json="",
                     small_object_mode="target_only", label_text_color_mode="auto", asset_fit_mode="stretch",
                     trim_transparent_assets=True, padding_mode="pixels", flicker_probability=0.04,
-                    position_jitter_px=0, min_box_area_ratio=0.0004, font="", **asset_kw) -> io.NodeOutput:
+                    position_jitter_px=0, min_box_area_ratio=0.0004, font="", asset_pack=None) -> io.NodeOutput:
             import comfy.utils
             import comfy.model_management as mm
             B = int(frames.shape[0])
             pbar = comfy.utils.ProgressBar(B)
-            secondary_track_data = [secondary_track_data_1, secondary_track_data_2, secondary_track_data_3]
-            group_labels = [secondary_group_label_1, secondary_group_label_2, secondary_group_label_3]
+            secondary_track_data = [secondary_track_data_1]
+            group_labels = [secondary_group_label_1]
             images, debug_preview, tracking_json = run_hud_renderer(
                 frames, seed=seed, style_mode=style_mode, max_objects=max_objects,
                 display_probability=display_probability, padding_x=padding_x, padding_y=padding_y,
@@ -573,10 +576,7 @@ try:
                 target_scale=target_scale, label_scale=label_scale, track_data=track_data,
                 secondary_track_data=secondary_track_data, group_labels=group_labels,
                 primary_group_label=primary_group_label, bboxes=bboxes, masks=masks,
-                frame_images=[asset_kw.get(f"frame_{i}_image") for i in range(1, 7)],
-                frame_masks=[asset_kw.get(f"frame_{i}_mask") for i in range(1, 7)],
-                target_images=[asset_kw.get(f"target_{i}_image") for i in range(1, 3)],
-                target_masks=[asset_kw.get(f"target_{i}_mask") for i in range(1, 3)],
+                asset_pack=asset_pack,
                 captions_json=captions_json, fixed_label=fixed_label, palette_json=palette_json,
                 caption_source=caption_source, caption_template=caption_template,
                 small_object_mode=small_object_mode, label_text_color_mode=label_text_color_mode,
