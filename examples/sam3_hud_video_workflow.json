@@ -1,0 +1,623 @@
+{
+  "last_node_id": 8,
+  "last_link_id": 11,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        0,
+        0
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            2
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [],
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "sam3.safetensors"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "LoadVideo",
+      "pos": [
+        0,
+        200
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VIDEO",
+          "type": "VIDEO",
+          "links": [
+            3
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadVideo"
+      },
+      "widgets_values": [
+        "input.mp4"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "GetVideoComponents",
+      "pos": [
+        340,
+        200
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "VIDEO",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            4,
+            6
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            9
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            10
+          ],
+          "slot_index": 2
+        },
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [],
+          "slot_index": 3
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GetVideoComponents"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 4,
+      "type": "CLIPTextEncode",
+      "pos": [
+        340,
+        0
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            5
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "person"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "SAM3_VideoTrack",
+      "pos": [
+        700,
+        100
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 4
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "initial_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "track_data",
+          "type": "SAM3_TRACK_DATA",
+          "links": [
+            7
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SAM3_VideoTrack"
+      },
+      "widgets_values": [
+        0.5,
+        8,
+        1
+      ]
+    },
+    {
+      "id": 6,
+      "type": "YonderHUDRenderer",
+      "pos": [
+        1060,
+        100
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "link": 6
+        },
+        {
+          "name": "track_data",
+          "type": "SAM3_TRACK_DATA",
+          "link": 7
+        },
+        {
+          "name": "secondary_track_data_1",
+          "type": "SAM3_TRACK_DATA",
+          "link": null
+        },
+        {
+          "name": "secondary_track_data_2",
+          "type": "SAM3_TRACK_DATA",
+          "link": null
+        },
+        {
+          "name": "secondary_track_data_3",
+          "type": "SAM3_TRACK_DATA",
+          "link": null
+        },
+        {
+          "name": "bboxes",
+          "type": "BOUNDING_BOX",
+          "link": null
+        },
+        {
+          "name": "masks",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "annotations",
+          "type": "YONDER_ANNOTATIONS",
+          "link": null
+        },
+        {
+          "name": "frame_1_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "frame_1_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "frame_2_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "frame_2_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "frame_3_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "frame_3_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "frame_4_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "frame_4_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "frame_5_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "frame_5_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "frame_6_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "frame_6_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "target_1_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "target_1_mask",
+          "type": "MASK",
+          "link": null
+        },
+        {
+          "name": "target_2_image",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "target_2_mask",
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            8
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "debug_preview",
+          "type": "IMAGE",
+          "links": [],
+          "slot_index": 1
+        },
+        {
+          "name": "tracking_json",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "YonderHUDRenderer"
+      },
+      "widgets_values": [
+        77,
+        "mixed",
+        24,
+        0.85,
+        8,
+        8,
+        0.55,
+        0.25,
+        6,
+        1.0,
+        0.3,
+        0.92,
+        3,
+        0.18,
+        1.0,
+        "PERSON",
+        "",
+        "",
+        "",
+        "",
+        "auto",
+        "adaptive",
+        "reposition_and_shorten",
+        1.0,
+        0,
+        true,
+        true,
+        false,
+        false,
+        false,
+        0.6,
+        0,
+        "track_random",
+        "fixed",
+        "PERSON",
+        "",
+        "{track:02d}. {label}",
+        "",
+        "target_only",
+        "auto",
+        "stretch",
+        true,
+        "pixels",
+        0.04,
+        0,
+        0.0004
+      ]
+    },
+    {
+      "id": 7,
+      "type": "CreateVideo",
+      "pos": [
+        1420,
+        100
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 8
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 9
+        },
+        {
+          "name": "fps",
+          "type": "FLOAT",
+          "link": 10,
+          "widget": {
+            "name": "fps"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "VIDEO",
+          "type": "VIDEO",
+          "links": [
+            11
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CreateVideo"
+      },
+      "widgets_values": [
+        24.0,
+        8
+      ]
+    },
+    {
+      "id": 8,
+      "type": "SaveVideo",
+      "pos": [
+        1760,
+        100
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "video",
+          "type": "VIDEO",
+          "link": 11
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveVideo"
+      },
+      "widgets_values": [
+        "video/YonderHUD",
+        "auto",
+        "auto"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      5,
+      1,
+      "MODEL"
+    ],
+    [
+      2,
+      1,
+      1,
+      4,
+      0,
+      "CLIP"
+    ],
+    [
+      3,
+      2,
+      0,
+      3,
+      0,
+      "VIDEO"
+    ],
+    [
+      4,
+      3,
+      0,
+      5,
+      0,
+      "IMAGE"
+    ],
+    [
+      5,
+      4,
+      0,
+      5,
+      3,
+      "CONDITIONING"
+    ],
+    [
+      6,
+      3,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      7,
+      5,
+      0,
+      6,
+      1,
+      "SAM3_TRACK_DATA"
+    ],
+    [
+      8,
+      6,
+      0,
+      7,
+      0,
+      "IMAGE"
+    ],
+    [
+      9,
+      3,
+      1,
+      7,
+      1,
+      "AUDIO"
+    ],
+    [
+      10,
+      3,
+      2,
+      7,
+      2,
+      "FLOAT"
+    ],
+    [
+      11,
+      7,
+      0,
+      8,
+      0,
+      "VIDEO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

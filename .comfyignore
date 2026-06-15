@@ -1,0 +1,8 @@
+# Files excluded from the Comfy Registry package (gitignore syntax).
+tests/
+.pytest_cache/
+__pycache__/
+*.zip
+.DS_Store
+docs/runtime_findings.md
+docs/INTERFACES.md

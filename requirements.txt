@@ -1,0 +1,5 @@
+# ComfyUI-YonderHUD runtime dependencies.
+# torch is provided by the ComfyUI environment and is intentionally NOT pinned here.
+# Keep this list minimal for Comfy Cloud / Registry compatibility (no heavy ML deps).
+numpy
+Pillow
