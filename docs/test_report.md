@@ -64,10 +64,18 @@ interruption supported.
 type is registered and every link connects type-matching sockets (validated at build
 time and re-checked). No third-party / missing nodes.
 
+## REAL SAM3 integration — EXECUTED & PASSED
+Ran ComfyUI's native `SAM3_VideoTrack` headless (reference ComfyUI 0.24.0 + venv, MPS) on
+a real 24-frame clip using `sam3.1_multiplex_fp16.safetensors` (Comfy-Org/sam3.1, 1.6 GB):
+- Real `SAM3_TRACK_DATA`: `packed_masks [24, 6, 1008, 126] uint8`, `n_frames=24`, `n_obj=6`,
+  `scores=[0.95,0.93,0.90,0.86,0.85,0.63]`, `orig_size=(376,896)` — **matches
+  `runtime_findings.md` §3.5 exactly** (the adapter was built against this contract).
+- 6 persistent objects → renderer (asset_pack + Tektur + track_random) → 144 detections,
+  stable IDs/colors across first/mid/last (`docs/real_sam3_*.png`), original audio + 24 fps
+  preserved → `examples/real_sam3_output.mp4`. Harness: `examples/run_real_sam3.py`.
+- Perf: ~7 s/frame on MPS (Apple); far faster on a CUDA GPU / in Comfy Desktop.
+
 ## Known limitations
-- **Live SAM3 inference not run here** (no SAM3 checkpoint on this machine). The adapter
-  is verified against SAM3's exact emitted structures + the registered `define_schema`
-  output type; run the example workflow with weights for a full live pass.
 - **Comfy Cloud presence is not self-serve** — see `cloud_compatibility.md` (custom-node
   upload is disabled; inclusion is curated by Comfy Org). Cloud's running ComfyUI version
   and whether core SAM3 is enabled there are **not publicly documented** — verify in-session
