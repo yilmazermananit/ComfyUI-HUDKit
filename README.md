@@ -36,6 +36,20 @@ Three independent layers: **Tracking (SAM3) → Annotation (labels) → Renderin
 
 Regenerate locally: `python examples/make_sample.py` → `examples/sample_output.mp4`.
 
+### With your own HUD assets (the reference look)
+
+Drop white-on-transparent PNGs into the renderer's slots — they get recolored per
+track and fitted to each box. The bundled set (`examples/assets/`, 3334×3334 each)
+maps to the inputs: **`Frame 1..6` → `frame_1..6_image`**, **`TARGET POINT 1..2` → `target_1..2_image`** (connect each Load Image's `MASK` too).
+
+| Your designs (recolored) | Applied (Tektur + category colors) |
+|---|---|
+| ![assets](docs/assets_preview.png) | ![custom](docs/sample_custom_after.png) |
+
+Reproduce: `python examples/make_sample_custom.py`. Tip: opaque designs (solid block /
+filled corner) read best at lower `frame_opacity` over real footage; bracket/outline
+designs work at full opacity.
+
 ## 3. Requirements
 
 - ComfyUI **≥ 0.20.1** (native SAM3 landed in 0.20.1; built/verified on **0.24.0**).
