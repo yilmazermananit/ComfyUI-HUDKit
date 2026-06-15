@@ -1,4 +1,4 @@
-"""Unit tests for ``yonder_hud.assets`` (brief §16 / §25 asset cases).
+"""Unit tests for ``yea_hud.assets`` (brief §16 / §25 asset cases).
 
 Runnable BOTH ways:
 
@@ -9,7 +9,7 @@ Runnable BOTH ways:
 No ComfyUI, no network, no model files. Tiny synthetic numpy/torch fixtures only.
 The MASK fixtures replicate ComfyUI ``LoadImage``'s inverse-alpha rule
 (``mask = 1 - alpha``) verbatim so the alpha-recovery path is exercised against
-the real native convention (see ``yonder_hud.alpha`` module docstring).
+the real native convention (see ``yea_hud.alpha`` module docstring).
 """
 
 from __future__ import annotations
@@ -26,8 +26,8 @@ if _REPO_ROOT not in sys.path:
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
 
-from yonder_hud import assets as A  # noqa: E402
-from yonder_hud import alpha as alpha_mod  # noqa: E402
+from yea_hud import assets as A  # noqa: E402
+from yea_hud import alpha as alpha_mod  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

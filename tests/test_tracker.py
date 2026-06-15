@@ -1,4 +1,4 @@
-"""Unit tests for yonder_hud.tracker (brief §10, §11, §25.3).
+"""Unit tests for yea_hud.tracker (brief §10, §11, §25.3).
 
 Covers the tracker-relevant brief §25 cases:
 
@@ -34,16 +34,16 @@ if _ROOT not in sys.path:
 import numpy as np  # noqa: E402  (synthetic-fixture dtype coverage)
 import torch  # noqa: E402  (verify 0-d tensor scalars survive into detections)
 
-from yonder_hud import geometry as G  # noqa: E402
-from yonder_hud.tracker import Tracker, micro_variation, _track_id_sort_key  # noqa: E402
-from yonder_hud.types import (  # noqa: E402
+from yea_hud import geometry as G  # noqa: E402
+from yea_hud.tracker import Tracker, micro_variation, _track_id_sort_key  # noqa: E402
+from yea_hud.types import (  # noqa: E402
     DEFAULT_PALETTE,
     PRIMITIVE_STYLES,
     Detection,
     Track,
     TrackStyle,
 )
-from yonder_hud.palette import resolve_palette  # noqa: E402
+from yea_hud.palette import resolve_palette  # noqa: E402
 
 
 EPS = 1e-6
@@ -407,7 +407,7 @@ def test_assign_style_is_cached_and_pure():
     s2 = tr.assign_style(3)
     assert s1 is s2, "assign_style must cache per track_id"
     # color matches palette.color_for_track contract
-    from yonder_hud.palette import color_for_track
+    from yea_hud.palette import color_for_track
     idx, _rgb = color_for_track(PALETTE, 9, 3)
     assert s1.color_id == idx
 

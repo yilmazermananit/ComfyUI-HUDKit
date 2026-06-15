@@ -1,4 +1,4 @@
-"""Yonder Inspect SAM3 Track Data — debug node.
+"""YEA Inspect SAM3 Track Data — debug node.
 
 Logs and returns a safe structural summary of a native SAM3_TRACK_DATA value
 (the dict produced by SAM3 Video Track: packed_masks / n_frames / scores /
@@ -12,11 +12,11 @@ from __future__ import annotations
 import json
 import logging
 
-logger = logging.getLogger("YonderHUD.inspect_track_data")
+logger = logging.getLogger("YEAHUD.inspect_track_data")
 
-DISPLAY_NAME = "Yonder Inspect SAM3 Track Data"
-NODE_ID = "YonderInspectSAM3TrackData"
-CATEGORY = "Yonder/HUD"
+DISPLAY_NAME = "YEA Inspect SAM3 Track Data"
+NODE_ID = "YEAInspectSAM3TrackData"
+CATEGORY = "YEA/HUD"
 
 # Native custom type string verified from comfy_extras/nodes_sam3.py:
 #   SAM3TrackData = io.Custom("SAM3_TRACK_DATA")
@@ -25,11 +25,11 @@ TRACK_DATA_TYPE = "SAM3_TRACK_DATA"
 
 def run_inspect_track_data(track_data=None) -> str:
     """Return a compact JSON string describing the SAM3_TRACK_DATA structure."""
-    from yonder_hud.track_adapter import summarize_track_data
+    from yea_hud.track_adapter import summarize_track_data
 
     summary = summarize_track_data(track_data)
     text = json.dumps(summary, indent=2, ensure_ascii=False, default=str)
-    logger.info("Yonder Inspect SAM3 Track Data:\n%s", text)
+    logger.info("YEA Inspect SAM3 Track Data:\n%s", text)
     return text
 
 
@@ -38,7 +38,7 @@ try:
 
     SAM3TrackData = io.Custom(TRACK_DATA_TYPE)
 
-    class YonderInspectSAM3TrackData(io.ComfyNode):
+    class YEAInspectSAM3TrackData(io.ComfyNode):
         @classmethod
         def define_schema(cls):
             return io.Schema(
@@ -66,6 +66,6 @@ try:
             text = run_inspect_track_data(track_data)
             return io.NodeOutput(text, track_data, ui=ui.PreviewText(text))
 
-    NODE = YonderInspectSAM3TrackData
+    NODE = YEAInspectSAM3TrackData
 except ImportError:  # pragma: no cover
     NODE = None

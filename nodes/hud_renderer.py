@@ -1,13 +1,13 @@
-"""Yonder HUD Renderer — main node.
+"""YEA HUD Renderer — main node.
 
 Consumes native SAM3 tracking output (preferred: SAM3_TRACK_DATA; fallback:
 BOUNDING_BOX and/or MASK), tracks stable identities, attaches semantic annotations
-(short/medium/detailed labels + child regions, supplied via YONDER_ANNOTATIONS /
+(short/medium/detailed labels + child regions, supplied via YEA_ANNOTATIONS /
 JSON — NEVER invented here), and composites designed HUD graphics over the frames.
 Outputs an IMAGE batch ready for Create Video / Save Video.
 
 Three layers stay separate: tracking (SAM3) -> annotation (labels) -> rendering.
-Business logic lives in ``yonder_hud/*``; this file is thin wiring + V3 schema and
+Business logic lives in ``yea_hud/*``; this file is thin wiring + V3 schema and
 is reused verbatim by the V1 shim.
 """
 
@@ -17,18 +17,18 @@ import dataclasses
 import json
 import logging
 
-logger = logging.getLogger("YonderHUD.renderer")
+logger = logging.getLogger("YEAHUD.renderer")
 
-DISPLAY_NAME = "Yonder HUD Renderer"
-NODE_ID = "YonderHUDRenderer"
-CATEGORY = "Yonder/HUD"
+DISPLAY_NAME = "YEA HUD Renderer"
+NODE_ID = "YEAHUDRenderer"
+CATEGORY = "YEA/HUD"
 TRACK_DATA_TYPE = "SAM3_TRACK_DATA"
-ANNOTATIONS_TYPE = "YONDER_ANNOTATIONS"
+ANNOTATIONS_TYPE = "YEA_ANNOTATIONS"
 
 DETECTION_SOURCE_ERROR = (
-    "Yonder HUD Renderer requires either native SAM3_TRACK_DATA, native BOUNDING_BOX, "
+    "YEA HUD Renderer requires either native SAM3_TRACK_DATA, native BOUNDING_BOX, "
     "or MASK input. Connect SAM3 Video Track (track_data), SAM3 Detect (bboxes/masks), "
-    "or a MASK source. Use 'Yonder Inspect SAM3 Track Data' / 'Yonder Inspect Bounding "
+    "or a MASK source. Use 'YEA Inspect SAM3 Track Data' / 'YEA Inspect Bounding "
     "Boxes' to verify the real structure."
 )
 
@@ -61,8 +61,8 @@ def _build_detections(groups, bboxes, masks, B, W, H, default_category):
     ('person:0', 'face:0', ...) so identities are globally unique across groups and
     flow through the tracker passthrough path (Track.track_id == that namespaced id).
     """
-    from yonder_hud import track_adapter, bbox_adapter, mask_adapter
-    from yonder_hud.annotations import namespace_id
+    from yea_hud import track_adapter, bbox_adapter, mask_adapter
+    from yea_hud.annotations import namespace_id
 
     meta = {}
     category_by_id = {}
@@ -131,8 +131,8 @@ def _small_object_style(style, mode):
 
 
 def _category_color(category, palette, seed):
-    from yonder_hud.palette import parse_hex
-    from yonder_hud.utils import stable_hash
+    from yea_hud.palette import parse_hex
+    from yea_hud.utils import stable_hash
     hexc = DEFAULT_CATEGORY_COLORS.get(category)
     rgb = parse_hex(hexc) if hexc else None
     if rgb is not None:
@@ -143,7 +143,7 @@ def _category_color(category, palette, seed):
 def _label_for(ann_track, caption_mode, length_mode, area_ratio, *, show_action, show_context,
                show_confidence, show_track_id, show_category, fixed_fallback, track_id):
     """Resolve the display text for a track from its annotation (or a safe fallback)."""
-    from yonder_hud.annotations import resolve_display_label
+    from yea_hud.annotations import resolve_display_label
     mode = caption_mode
     if length_mode == "adaptive" and caption_mode in ("auto", "mixed"):
         mode = "detailed" if area_ratio >= 0.06 else ("medium" if area_ratio >= 0.012 else "short")
@@ -187,15 +187,15 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
                      progress=None, interrupt=None):
     """Render HUD overlays. Returns (images, debug_preview, tracking_json_str)."""
     import torch  # noqa: F401
-    from yonder_hud import palette as palette_mod
-    from yonder_hud import captions as captions_mod
-    from yonder_hud import geometry, text_render
-    from yonder_hud.tracker import Tracker, micro_variation
-    from yonder_hud.assets import AssetBank
-    from yonder_hud.compositor import render_frames
-    from yonder_hud.types import RenderItem
-    from yonder_hud.label_placement import LabelPlacer, PlacementRequest
-    from yonder_hud.annotations import parse_annotations_json, AnnotationSet, namespace_id
+    from yea_hud import palette as palette_mod
+    from yea_hud import captions as captions_mod
+    from yea_hud import geometry, text_render
+    from yea_hud.tracker import Tracker, micro_variation
+    from yea_hud.assets import AssetBank
+    from yea_hud.compositor import render_frames
+    from yea_hud.types import RenderItem
+    from yea_hud.label_placement import LabelPlacer, PlacementRequest
+    from yea_hud.annotations import parse_annotations_json, AnnotationSet, namespace_id
 
     B = int(frames.shape[0]); H = int(frames.shape[1]); W = int(frames.shape[2])
     frame_area = float(max(1, W * H))
@@ -316,7 +316,7 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
             else:
                 _, rgb = palette_mod.color_for_track(palette, int(seed), track.track_id)
             if ann_track and ann_track.style_overrides.preferred_color:
-                from yonder_hud.palette import parse_hex
+                from yea_hud.palette import parse_hex
                 pc = parse_hex(ann_track.style_overrides.preferred_color)
                 if pc:
                     rgb = pc
@@ -371,7 +371,7 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
                 continue
             fcolor = _category_color(fa.category, palette, int(seed))
             ftext = (fa.detailed_label or fa.short_label or fa.category).upper()
-            from yonder_hud.types import TrackStyle
+            from yea_hud.types import TrackStyle
             fstyle = TrackStyle(primitive_style="corners", use_caption=True, use_target=False)
             fitem = RenderItem(track_id=fa.annotation_id, order_index=order + 1, box=fbox,
                                color_rgb=fcolor, label_text=ftext, style=fstyle, score=fa.confidence,
@@ -424,15 +424,15 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
 # --- V3 node (primary) ------------------------------------------------------
 try:
     from comfy_api.latest import io
-    from yonder_hud.types import (
+    from yea_hud.types import (
         STYLE_MODES, SMALL_OBJECT_MODES, CAPTION_SOURCES, LABEL_TEXT_COLOR_MODES,
         ASSET_FIT_MODES, PADDING_MODES, DEFAULTS,
     )
-    from yonder_hud.annotations import CAPTION_MODES
-    from yonder_hud.label_placement import COLLISION_MODES
+    from yea_hud.annotations import CAPTION_MODES
+    from yea_hud.label_placement import COLLISION_MODES
 
     SAM3TrackData = io.Custom(TRACK_DATA_TYPE)
-    YonderAnnotations = io.Custom(ANNOTATIONS_TYPE)
+    YEAAnnotations = io.Custom(ANNOTATIONS_TYPE)
     LABEL_LENGTH_MODES = ["single_line", "two_line", "truncate", "adaptive"]
     COLOR_MODES = ["track_random", "category_based", "source_based", "fixed_palette", "annotation_override"]
 
@@ -448,7 +448,7 @@ try:
             ins.append(io.Mask.Input(f"target_{i}_mask", optional=True))
         return ins
 
-    class YonderHUDRenderer(io.ComfyNode):
+    class YEAHUDRenderer(io.ComfyNode):
         @classmethod
         def define_schema(cls):
             return io.Schema(
@@ -456,7 +456,7 @@ try:
                 description=(
                     "Render designed, densely-labelled HUD overlays from native SAM3 tracking. "
                     "Prefers SAM3_TRACK_DATA (stable native identities); falls back to BOUNDING_BOX "
-                    "/ MASK. Attaches stable semantic labels from YONDER_ANNOTATIONS / JSON (never "
+                    "/ MASK. Attaches stable semantic labels from YEA_ANNOTATIONS / JSON (never "
                     "invented here), renders primary + child annotations with collision-aware label "
                     "placement, recolors transparent PNG assets, and outputs an IMAGE batch."
                 ),
@@ -490,9 +490,9 @@ try:
                     io.BoundingBox.Input("bboxes", optional=True, force_input=True, tooltip="Fallback BOUNDING_BOX."),
                     io.Mask.Input("masks", optional=True, tooltip="Fallback / supplementary MASK."),
                     # --- annotations (semantic labels) ---
-                    YonderAnnotations.Input("annotations", optional=True, tooltip="PREFERRED. From Annotation Builder / JSON."),
+                    YEAAnnotations.Input("annotations", optional=True, tooltip="PREFERRED. From Annotation Builder / JSON."),
                     io.String.Input("annotations_json", default="", multiline=True, optional=True,
-                                    tooltip="Inline YONDER_ANNOTATIONS JSON (used if no annotations object)."),
+                                    tooltip="Inline YEA_ANNOTATIONS JSON (used if no annotations object)."),
                     io.Combo.Input("caption_mode", options=list(CAPTION_MODES), default="auto", optional=True),
                     io.Combo.Input("label_length_mode", options=LABEL_LENGTH_MODES, default="adaptive", optional=True),
                     io.Combo.Input("label_collision_mode", options=list(COLLISION_MODES), default="reposition_and_shorten", optional=True),
@@ -582,6 +582,6 @@ try:
                 interrupt=mm.throw_exception_if_processing_interrupted)
             return io.NodeOutput(images, debug_preview, tracking_json)
 
-    NODE = YonderHUDRenderer
+    NODE = YEAHUDRenderer
 except ImportError:  # pragma: no cover
     NODE = None

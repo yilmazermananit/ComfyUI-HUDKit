@@ -1,4 +1,4 @@
-"""End-to-end integration of the Yonder HUD Renderer business function against the
+"""End-to-end integration of the YEA HUD Renderer business function against the
 REAL native data contracts (brief §25.5 — the most critical test):
 
   * BOUNDING_BOX  : list[list[dict{x,y,width,height,score}]]  (SAM3 Detect shape)

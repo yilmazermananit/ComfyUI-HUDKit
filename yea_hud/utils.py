@@ -1,7 +1,7 @@
-"""Determinism + caching primitives for ComfyUI-YonderHUD.
+"""Determinism + caching primitives for ComfyUI-YEAHUD.
 
 This module is schema-agnostic: it imports only the Python standard library and
-``yonder_hud.types``. It contains **no** ComfyUI / torch / PIL imports and does no
+``yea_hud.types``. It contains **no** ComfyUI / torch / PIL imports and does no
 I/O, networking, subprocess, ``eval``/``exec`` or any non-deterministic work. Every
 public symbol here is pure, deterministic and safe to run inside Comfy Cloud.
 

@@ -1,17 +1,17 @@
 """compositor.py — per-frame HUD draw orchestration (brief §17).
 
-This is **the integration point** of ComfyUI-YonderHUD: the seam where the
+This is **the integration point** of ComfyUI-YEAHUD: the seam where the
 schema-agnostic business logic (tracking, style, placement, captions, assets)
 is finally rasterized over the real video frames. The node layer
 (``nodes/hud_renderer.py``) builds, per frame, a list of
-:class:`yonder_hud.types.RenderItem` and hands the whole batch here together
-with an :class:`yonder_hud.assets.AssetBank`, the resolved palette and a flat
+:class:`yea_hud.types.RenderItem` and hands the whole batch here together
+with an :class:`yea_hud.assets.AssetBank`, the resolved palette and a flat
 ``params`` dict; :func:`render_frames` returns a brand-new IMAGE tensor.
 
 Schema-agnostic / Cloud-safe
 ----------------------------
 Imports only the Python standard library, :mod:`numpy`, :mod:`PIL` (Pillow),
-:mod:`torch`, and sibling ``yonder_hud`` modules. There are **no** ComfyUI
+:mod:`torch`, and sibling ``yea_hud`` modules. There are **no** ComfyUI
 imports (no ``comfy`` / ``comfy_api`` / ``nodes``), no network, no subprocess,
 no ``eval``/``exec``, no file writes, no arbitrary-path reads — pure
 deterministic compute. The only objects that cross the ComfyUI boundary are the
@@ -43,7 +43,7 @@ For every :class:`RenderItem` in plan order:
    the vector primitive (corner brackets / outline);
 3. **crosshair**        — the target/reticle PNG, else the procedural crosshair;
 4. **label strips**     — the solid caption-strip background + text (a single
-   :func:`yonder_hud.text_render.render_label_strip` array already contains
+   :func:`yea_hud.text_render.render_label_strip` array already contains
    both, so steps "label strips" and "text" of the contract are produced in one
    call and blitted here);
 5. **micro details**    — registration marks (``draw_registration``).
@@ -600,7 +600,7 @@ def render_frames(
 ) -> "torch.Tensor":
     """Render the HUD overlay for every frame and return a new IMAGE tensor.
 
-    This is the integration point between the schema-agnostic ``yonder_hud``
+    This is the integration point between the schema-agnostic ``yea_hud``
     logic and ComfyUI's tensor world. For each frame the base image is moved to
     CPU numpy once, a single straight-alpha RGBA overlay is built in the brief
     §17 draw order, alpha-composited over the base once, converted back to a
@@ -615,7 +615,7 @@ def render_frames(
             empty inner list means "draw nothing on this frame" (the base frame
             is passed through unchanged). If ``plans`` is shorter than ``B`` the
             missing frames are treated as empty; extra plan entries are ignored.
-        assets: An :class:`yonder_hud.assets.AssetBank` (or any object exposing
+        assets: An :class:`yea_hud.assets.AssetBank` (or any object exposing
             ``frame_rgba`` / ``target_rgba`` / ``fit_frame``); may be ``None`` —
             then only procedural primitives are drawn.
         palette: The resolved palette (list of RGB triples). Carried for API
@@ -626,7 +626,7 @@ def render_frames(
             ``label_opacity``, ``line_width``, ``target_scale``, ``label_scale``,
             ``label_text_color_mode``, ``detail_density``.
         font_path: Optional explicit font path for label strips (forwarded to
-            :func:`yonder_hud.text_render.get_font`; ``None`` uses the bundled /
+            :func:`yea_hud.text_render.get_font`; ``None`` uses the bundled /
             system / default chain).
         progress: Optional progress reporter exposing ``update(1)`` (e.g. a
             ComfyUI ``ProgressBar``); called once per frame. Duck-typed; any

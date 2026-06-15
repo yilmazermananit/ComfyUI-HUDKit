@@ -1,4 +1,4 @@
-# Test Report — ComfyUI-YonderHUD
+# Test Report — ComfyUI-YEAHUD
 
 Environment: ComfyUI 0.24.0 venv (Python 3.12.8, torch 2.7.0.dev, numpy 1.26.4,
 Pillow 11.0.0, MPS). `pytest` is not installed in this venv, so each file is also a

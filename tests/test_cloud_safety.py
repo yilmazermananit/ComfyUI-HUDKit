@@ -17,7 +17,7 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 # Directories that ship in the package (per .comfyignore: tests/ excluded).
-SCAN_DIRS = ["yonder_hud", "nodes"]
+SCAN_DIRS = ["yea_hud", "nodes"]
 SCAN_ROOT_FILES = ["__init__.py"]
 
 # (regex, human reason). Strict CODE forms only (import X / X.call / call()),
@@ -70,7 +70,7 @@ def test_no_banned_patterns():
 def test_no_network_imports_resolve():
     # Importing the pure types module must not pull torch/PIL/network at import time.
     import importlib
-    mod = importlib.import_module("yonder_hud.types")
+    mod = importlib.import_module("yea_hud.types")
     assert hasattr(mod, "Detection") and hasattr(mod, "DEFAULTS")
 
 

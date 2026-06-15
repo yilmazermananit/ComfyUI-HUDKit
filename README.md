@@ -1,4 +1,4 @@
-# ComfyUI-YonderHUD
+# ComfyUI-YEAHUD
 
 Designed, densely-labelled **HUD video overlays** driven by **native SAM3 tracking**.
 Track people/objects with SAM3, attach stable short/detailed semantic labels, drop
@@ -20,7 +20,7 @@ ComfyUI's **native SAM3** nodes; this pack:
 
 1. reads SAM3 output safely (preferred **`SAM3_TRACK_DATA`**, fallback **`BOUNDING_BOX`** + **`MASK`**),
 2. keeps a **stable identity** per subject across frames (native object index, or an internal IoU tracker),
-3. attaches **semantic annotations** (short/medium/detailed labels, actions, child regions) from **`YONDER_ANNOTATIONS`** / JSON — *never invented from the mask*,
+3. attaches **semantic annotations** (short/medium/detailed labels, actions, child regions) from **`YEA_ANNOTATIONS`** / JSON — *never invented from the mask*,
 4. recolors your **white transparent PNG** frame/target assets to the track's palette color,
 5. draws procedural HUD (corner brackets, outlines, translucent blocks, crosshairs, caption strips, registration marks),
 6. places dense labels with **collision avoidance + temporal stability**,
@@ -44,8 +44,8 @@ Regenerate locally: `python examples/make_sample.py` → `examples/sample_output
 
 ## 4. Install — ComfyUI Manager / Registry
 
-Search **"YonderHUD"** in ComfyUI-Manager, or once published:
-`comfy node install comfyui-yonderhud`.
+Search **"YEAHUD"** in ComfyUI-Manager, or once published:
+`comfy node install comfyui-yeahud`.
 
 > Comfy Cloud note: custom-node *upload* is disabled on Cloud; running there requires
 > Comfy Org to add the pack to the pre-installed set. See `docs/cloud_compatibility.md`.
@@ -54,11 +54,11 @@ Search **"YonderHUD"** in ComfyUI-Manager, or once published:
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone <repo-url> ComfyUI-YonderHUD
+git clone <repo-url> ComfyUI-YEAHUD
 # deps (torch already present):
 ComfyUI/.venv/bin/pip install numpy Pillow
 ```
-Restart ComfyUI. The nodes appear under **`Yonder/HUD`** and **`Yonder/HUD/Annotation`**.
+Restart ComfyUI. The nodes appear under **`YEA/HUD`** and **`YEA/HUD/Annotation`**.
 
 ## 6. SAM3 example workflows
 
@@ -66,9 +66,9 @@ Import any JSON from `examples/` (drag onto the canvas):
 
 | File | Flow |
 |---|---|
-| `sam3_hud_video_workflow.json` | **Primary.** Load Video → Get Video Components → SAM3 Video Track → **Yonder HUD Renderer** → Create Video → Save Video |
+| `sam3_hud_video_workflow.json` | **Primary.** Load Video → Get Video Components → SAM3 Video Track → **YEA HUD Renderer** → Create Video → Save Video |
 | `sam3_hud_image_batch_workflow.json` | SAM3 Detect (bbox+mask) → renderer (per-frame, no persistent tracking) |
-| `manual_annotation_workflow.json` | + **Yonder Annotation JSON** for hand-written detailed labels |
+| `manual_annotation_workflow.json` | + **YEA Annotation JSON** for hand-written detailed labels |
 | `vlm_annotation_workflow.json` | + **Track Crop Extractor** → your VLM → **Annotation Builder** (one label per track) |
 | `dense_multi_category_workflow.json` | two SAM3 groups (e.g. `person` + `face`) merged into one dense HUD |
 
@@ -85,10 +85,10 @@ You never convert bbox types or add SEGS/Impact/KJNodes bridges.
 
 Full I/O in [`docs/node_reference.md`](docs/node_reference.md).
 
-- **Yonder HUD Renderer** — `frames` + (`track_data` | `bboxes` | `masks`) + optional `annotations` + 6 frame / 2 target PNG pairs → `images`, `debug_preview`, `tracking_json`.
-- **Yonder Inspect SAM3 Track Data** / **Yonder Inspect Bounding Boxes** — print the real runtime structure; pass through unchanged.
-- **Yonder Mask to Native BBoxes** — MASK → native `BOUNDING_BOX` (connected components; no third-party type).
-- **Yonder Annotation JSON** / **Annotation Builder** / **Track Crop Extractor** / **Detailed Label Prompt** — the model-independent annotation layer (§10).
+- **YEA HUD Renderer** — `frames` + (`track_data` | `bboxes` | `masks`) + optional `annotations` + 6 frame / 2 target PNG pairs → `images`, `debug_preview`, `tracking_json`.
+- **YEA Inspect SAM3 Track Data** / **YEA Inspect Bounding Boxes** — print the real runtime structure; pass through unchanged.
+- **YEA Mask to Native BBoxes** — MASK → native `BOUNDING_BOX` (connected components; no third-party type).
+- **YEA Annotation JSON** / **Annotation Builder** / **Track Crop Extractor** / **Detailed Label Prompt** — the model-independent annotation layer (§10).
 
 ## 9. Default settings
 
@@ -102,9 +102,9 @@ caption_mode auto · label_length_mode adaptive · label_collision_mode repositi
 
 ## 10. Detailed labels (annotation layer)
 
-The renderer **never invents** descriptions. Rich text comes from `YONDER_ANNOTATIONS`:
+The renderer **never invents** descriptions. Rich text comes from `YEA_ANNOTATIONS`:
 
-- **Manual:** paste JSON into **Yonder Annotation JSON** (see schema in `docs/node_reference.md`).
+- **Manual:** paste JSON into **YEA Annotation JSON** (see schema in `docs/node_reference.md`).
 - **VLM:** **Track Crop Extractor** picks a few representative crops per track → your VLM (via **Detailed Label Prompt**'s strict JSON prompt) → **Annotation Builder** reduces multiple crop responses to one consensus label per track and caches it.
 
 By-track caption JSON example:
@@ -128,7 +128,7 @@ This pack consumes **only** native ComfyUI types: `SAM3_TRACK_DATA`, `BOUNDING_B
 (the `list[list[{x,y,width,height}]]` SAM3/mediapipe emit), `MASK`. It does **not**
 use `BBOX` / `BBOX_LIST` / `SEGS` / `F_BBOXES` / Impact / KJNodes formats. If your
 detector emits a custom type, convert with its own "to BOUNDING_BOX" node or feed a
-MASK into **Yonder Mask to Native BBoxes**. Don't trust socket color — verify types
+MASK into **YEA Mask to Native BBoxes**. Don't trust socket color — verify types
 with the Inspect nodes.
 
 ## 13. Performance
@@ -140,5 +140,5 @@ with the Inspect nodes.
 
 ## 14. License
 
-MIT — see [`LICENSE`](LICENSE). © 2026 DifferentGuys Studio (Yonder).
+MIT — see [`LICENSE`](LICENSE). © 2026 DifferentGuys Studio (YEA).
 Built against native ComfyUI SAM3 (PR #13408). Not affiliated with Comfy Org or Meta.

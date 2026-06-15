@@ -1,11 +1,11 @@
-# Troubleshooting — ComfyUI-YonderHUD
+# Troubleshooting — ComfyUI-YEAHUD
 
-### "Yonder HUD Renderer requires either native SAM3_TRACK_DATA, BOUNDING_BOX, or MASK"
+### "YEA HUD Renderer requires either native SAM3_TRACK_DATA, BOUNDING_BOX, or MASK"
 No detection source is connected. Wire **SAM3 Video Track** → `track_data` (preferred),
 or **SAM3 Detect** → `bboxes` / `masks`. At least one is required.
 
 ### A socket won't connect / labels land on the wrong subject
-Don't trust socket color. Run **Yonder Inspect SAM3 Track Data** or **Yonder Inspect
+Don't trust socket color. Run **YEA Inspect SAM3 Track Data** or **YEA Inspect
 Bounding Boxes** on the upstream output and read `debug_json` — it prints the real
 Python type, nesting, dict keys, per-frame counts and coordinate format. This pack
 targets the **native** types (`SAM3_TRACK_DATA`, `BOUNDING_BOX = list[list[{x,y,width,
@@ -31,7 +31,7 @@ On the bbox path, raise `track_memory_frames` and/or lower `track_iou_threshold`
 Increase `smoothing` to reduce box jitter (too high lags fast motion).
 
 ### Detailed descriptions are generic ("PERSON") instead of "SHIRTLESS MAN…"
-That text must be supplied — the renderer never invents it. Provide it via **Yonder
+That text must be supplied — the renderer never invents it. Provide it via **YEA
 Annotation JSON** (manual) or a VLM workflow (**Track Crop Extractor → your VLM →
 Annotation Builder**). Without annotations you get safe generic group labels by design.
 
@@ -42,7 +42,7 @@ Make sure the same frames feed both SAM3 and the renderer.
 
 ### Invalid annotation JSON
 By default the renderer logs a `validation_report`, falls back to generic labels, and
-still renders the whole video. Set `strict=True` on **Yonder Annotation JSON** to fail
+still renders the whole video. Set `strict=True` on **YEA Annotation JSON** to fail
 fast instead. The report cites the parse position and a minimal valid example.
 
 ### Slow on long videos
@@ -51,7 +51,7 @@ recolor/resize, fonts and text measurements are cached. A progress bar shows per
 work; the run is interruptible.
 
 ### Node doesn't appear after install
-Check the ComfyUI log for `ComfyUI-YonderHUD: registered N V3 nodes`. If it logged the
+Check the ComfyUI log for `ComfyUI-YEAHUD: registered N V3 nodes`. If it logged the
 **V1** line instead, your ComfyUI predates `comfy_api` — the V1 fallback still registers
-all 8 nodes. If nothing logged, confirm the folder is `custom_nodes/ComfyUI-YonderHUD`
+all 8 nodes. If nothing logged, confirm the folder is `custom_nodes/ComfyUI-YEAHUD`
 and `numpy`/`Pillow` are installed in ComfyUI's Python.

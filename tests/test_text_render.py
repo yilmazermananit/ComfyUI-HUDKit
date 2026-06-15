@@ -1,4 +1,4 @@
-"""Tests for ``yonder_hud.text_render`` (brief §25 — text/label cases).
+"""Tests for ``yea_hud.text_render`` (brief §25 — text/label cases).
 
 Runnable two ways:
 
@@ -26,7 +26,7 @@ if _REPO_ROOT not in sys.path:
 
 from PIL import ImageFont  # noqa: E402
 
-from yonder_hud import text_render as tr  # noqa: E402
+from yea_hud import text_render as tr  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

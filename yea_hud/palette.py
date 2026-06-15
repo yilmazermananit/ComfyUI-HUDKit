@@ -1,7 +1,7 @@
-"""Color resolution for ComfyUI-YonderHUD (brief §14).
+"""Color resolution for ComfyUI-YEAHUD (brief §14).
 
 This module is schema-agnostic: it imports only the Python standard library and
-sibling :mod:`yonder_hud` modules (``types`` for the palette constants, ``utils``
+sibling :mod:`yea_hud` modules (``types`` for the palette constants, ``utils``
 for the deterministic hash). It contains **no** ComfyUI imports and does no I/O,
 networking, subprocess, ``eval``/``exec`` or any non-deterministic work, so it is
 safe to run inside Comfy Cloud.
@@ -13,7 +13,7 @@ It owns four concerns:
   valid 6-digit hex color.
 * **Palette resolution** (:func:`resolve_palette`) — parse a JSON list of hex
   strings, drop the invalid entries, and guarantee a non-empty palette by falling
-  back to :data:`yonder_hud.types.DEFAULT_PALETTE`.
+  back to :data:`yea_hud.types.DEFAULT_PALETTE`.
 * **Deterministic per-track color** (:func:`color_for_track`) — pick a palette
   index from ``stable_hash(seed, track_id)`` so a given ``(seed, track_id)`` always
   draws the same color on every machine / run (seed-stable HUD identity).
@@ -22,7 +22,7 @@ It owns four concerns:
 
 RGB colors are ``(r, g, b)`` floats in ``0..1`` everywhere, matching the rest of
 the pack (see ``docs/INTERFACES.md`` and ``palette.luminance`` referenced by
-:mod:`yonder_hud.alpha`).
+:mod:`yea_hud.alpha`).
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ __all__ = [
 RGB = Tuple[float, float, float]
 
 # Rec.709 luma coefficients. These are the same coefficients used in
-# :mod:`yonder_hud.alpha` (``_LUMA``) so the whole pack agrees on "brightness".
+# :mod:`yea_hud.alpha` (``_LUMA``) so the whole pack agrees on "brightness".
 # Applied directly to the already-display (gamma-encoded) sRGB values — this is
 # the standard "luma" (Y') convention, NOT a linear-light luminance, and it is
 # what we want for a fast, perceptual-enough black-vs-white text decision.
@@ -129,7 +129,7 @@ def resolve_palette(palette_json: Optional[str]) -> list:
     typo never breaks rendering:
 
     * ``None``, empty / whitespace-only string, or text that is not valid JSON
-      -> :data:`yonder_hud.types.DEFAULT_PALETTE`.
+      -> :data:`yea_hud.types.DEFAULT_PALETTE`.
     * Valid JSON that is not a list (object / number / bare string) -> default.
     * A list whose entries are filtered through :func:`parse_hex`; non-string and
       invalid-hex entries are dropped. (A bare JSON string that happens to be a
@@ -195,12 +195,12 @@ def color_for_track(
     """Deterministically pick a palette color for a track.
 
     The index is ``stable_hash(seed, track_id) % len(palette)`` using
-    :func:`yonder_hud.utils.stable_hash`, which is independent of
+    :func:`yea_hud.utils.stable_hash`, which is independent of
     ``PYTHONHASHSEED`` and stable across runs / processes / operating systems.
     The same ``(seed, track_id)`` therefore always maps to the same color — this
     is the seam that gives every tracked object a stable HUD identity (brief
     §10.5 / §11.1). ``track_id`` may be an ``int`` or a ``str`` (see
-    :class:`yonder_hud.types.Detection.source_track_id`); both are hashed
+    :class:`yea_hud.types.Detection.source_track_id`); both are hashed
     type-safely.
 
     Args:
@@ -229,7 +229,7 @@ def luminance(rgb: Sequence[float]) -> float:
 
     Computed as ``0.2126*r + 0.7152*g + 0.0722*b`` directly on the supplied
     (display-encoded sRGB) values — the standard luma convention shared with
-    :mod:`yonder_hud.alpha`. Each channel is clamped to ``0..1`` first, so the
+    :mod:`yea_hud.alpha`. Each channel is clamped to ``0..1`` first, so the
     returned value is always in ``0..1`` even if a caller passes a slightly
     out-of-range or non-finite component.
 
@@ -251,7 +251,7 @@ def contrast_text_color(bg_rgb: Sequence[float], mode: str = "auto") -> RGB:
     Args:
         bg_rgb: The background ``(r, g, b)`` triple in ``0..1`` (e.g. the track's
             label-strip color).
-        mode: One of :data:`yonder_hud.types.LABEL_TEXT_COLOR_MODES`:
+        mode: One of :data:`yea_hud.types.LABEL_TEXT_COLOR_MODES`:
 
             * ``'white'`` — always return white.
             * ``'black'`` — always return black.

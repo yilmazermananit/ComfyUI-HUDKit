@@ -1,11 +1,11 @@
-# Architecture — ComfyUI-YonderHUD
+# Architecture — ComfyUI-YEAHUD
 
 ## Three independent layers
 ```
 Tracking  (native SAM3)      → stable identity + masks/boxes over time
    │  SAM3_TRACK_DATA (preferred) | BOUNDING_BOX + MASK (fallback)
    ▼
-Annotation (YONDER_ANNOTATIONS) → short/detailed labels, actions, child regions
+Annotation (YEA_ANNOTATIONS) → short/detailed labels, actions, child regions
    │  manual JSON | VLM workflow | secondary detections | safe generic fallback
    ▼
 Rendering (this pack)         → PNG/procedural frames, crosshairs, label strips, text
@@ -18,11 +18,11 @@ the renderer in a composable workflow, so the core stays network/model-free (Clo
 ```
 __init__.py            V3 comfy_entrypoint (8 nodes); V1 NODE_CLASS_MAPPINGS fallback; sys.path bootstrap
 nodes/                 thin schema + wiring (no business logic):
-  hud_renderer.py        run_hud_renderer() + YonderHUDRenderer (V3)
+  hud_renderer.py        run_hud_renderer() + YEAHUDRenderer (V3)
   inspect_track_data.py inspect_bbox.py mask_to_bbox.py
   annotation_json.py annotation_builder.py track_crop_extractor.py detailed_label_prompt.py
   v1_compat.py           V1 mirror, reuses the same run_* functions
-yonder_hud/            schema-agnostic business logic (torch/numpy/PIL only):
+yea_hud/            schema-agnostic business logic (torch/numpy/PIL only):
   types.py               Detection, Track, TrackStyle, RenderItem, DEFAULTS, enums
   utils.py               stable_hash / rng_for / unit_float / LRUCache
   geometry.py            xyxy math, padding, EMA smoothing, IoU, importance, label_rect, asset_rect
@@ -30,14 +30,14 @@ yonder_hud/            schema-agnostic business logic (torch/numpy/PIL only):
   mask_adapter.py        MASK normalize + connected components → Detection / native bboxes
   track_adapter.py       SAM3_TRACK_DATA → Detection (object index = persistent id)
   tracker.py             passthrough (native id) OR greedy IoU; lifecycle; deterministic style
-  annotations.py         YONDER_ANNOTATIONS schema/validate/normalize/merge/consensus + sensitive filter
+  annotations.py         YEA_ANNOTATIONS schema/validate/normalize/merge/consensus + sensitive filter
   label_placement.py     candidate positions + collision cost + temporal stability
   alpha.py               Load Image inverse-alpha recovery, trim, recolor, resize
   palette.py             palette parse, deterministic per-track color, contrast
   text_render.py         font cache, measure, truncate, label strip
   procedural_hud.py      corners / outline / solid / crosshair / registration
   compositor.py          per-frame single-RGBA-overlay draw, alpha-composite, stack
-web/js/yonder_hud.js   optional UX (rendering works headless without it)
+web/js/yea_hud.js   optional UX (rendering works headless without it)
 ```
 
 ## Identity & determinism

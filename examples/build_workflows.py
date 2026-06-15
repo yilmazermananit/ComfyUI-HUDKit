@@ -1,7 +1,7 @@
 """Generate + validate importable ComfyUI workflow JSON (litegraph UI format).
 
 Dev tool (not shipped to the Registry — see .comfyignore). Introspects the V3
-schemas of the Yonder nodes for their canonical socket order, hardcodes the native
+schemas of the YEA nodes for their canonical socket order, hardcodes the native
 ComfyUI node socket specs (verified from comfy_extras source), builds the graphs
 with correct slot indices, VALIDATES that every link connects type-matching sockets
 and that every node type is registered, then writes the .json files next to this
@@ -44,7 +44,7 @@ NATIVE = {
                     "out": [("masks", "MASK"), ("bboxes", "BOUNDING_BOX")]},
     "CreateVideo": {"in": [("images", "IMAGE"), ("audio", "AUDIO")], "widgets": [("fps", 24.0), ("bit_depth", 8)],
                     "out": [("VIDEO", "VIDEO")]},
-    "SaveVideo": {"in": [("video", "VIDEO")], "widgets": [("filename_prefix", "video/YonderHUD"),
+    "SaveVideo": {"in": [("video", "VIDEO")], "widgets": [("filename_prefix", "video/YEAHUD"),
                                                           ("format", "auto"), ("codec", "auto")], "out": []},
     "LoadImage": {"in": [], "widgets": [("image", "frame.png")], "out": [("IMAGE", "IMAGE"), ("MASK", "MASK")]},
 }
@@ -52,17 +52,17 @@ NATIVE = {
 
 def _load_my_specs():
     from comfy_api.latest import io  # noqa: F401
-    from nodes.hud_renderer import YonderHUDRenderer
-    from nodes.inspect_track_data import YonderInspectSAM3TrackData
-    from nodes.inspect_bbox import YonderInspectBoundingBoxes
-    from nodes.mask_to_bbox import YonderMaskToNativeBBoxes
-    from nodes.annotation_json import YonderAnnotationJSON
-    from nodes.annotation_builder import YonderAnnotationBuilder
-    from nodes.track_crop_extractor import YonderTrackCropExtractor
-    from nodes.detailed_label_prompt import YonderDetailedLabelPrompt
-    classes = [YonderHUDRenderer, YonderInspectSAM3TrackData, YonderInspectBoundingBoxes,
-               YonderMaskToNativeBBoxes, YonderAnnotationJSON, YonderAnnotationBuilder,
-               YonderTrackCropExtractor, YonderDetailedLabelPrompt]
+    from nodes.hud_renderer import YEAHUDRenderer
+    from nodes.inspect_track_data import YEAInspectSAM3TrackData
+    from nodes.inspect_bbox import YEAInspectBoundingBoxes
+    from nodes.mask_to_bbox import YEAMaskToNativeBBoxes
+    from nodes.annotation_json import YEAAnnotationJSON
+    from nodes.annotation_builder import YEAAnnotationBuilder
+    from nodes.track_crop_extractor import YEATrackCropExtractor
+    from nodes.detailed_label_prompt import YEADetailedLabelPrompt
+    classes = [YEAHUDRenderer, YEAInspectSAM3TrackData, YEAInspectBoundingBoxes,
+               YEAMaskToNativeBBoxes, YEAAnnotationJSON, YEAAnnotationBuilder,
+               YEATrackCropExtractor, YEADetailedLabelPrompt]
     specs = {}
     for cls in classes:
         s = cls.define_schema()
@@ -158,7 +158,7 @@ class Graph:
 
 def _renderer_widget_values(specs):
     """Default widget values for the renderer (positional, schema order)."""
-    return [w[1] for w in specs["YonderHUDRenderer"]["widgets"]]
+    return [w[1] for w in specs["YEAHUDRenderer"]["widgets"]]
 
 
 def build_video(specs):
@@ -168,7 +168,7 @@ def build_video(specs):
     gvc = g.add("GetVideoComponents", pos=(340, 200))
     clip = g.add("CLIPTextEncode", pos=(340, 0), widget_values=["person"])
     track = g.add("SAM3_VideoTrack", pos=(700, 100), widget_values=[0.5, 8, 1])
-    rend = g.add("YonderHUDRenderer", pos=(1060, 100), widget_values=_renderer_widget_values(specs))
+    rend = g.add("YEAHUDRenderer", pos=(1060, 100), widget_values=_renderer_widget_values(specs))
     cv = g.add("CreateVideo", pos=(1420, 100), widget_values=[24.0, 8])
     sv = g.add("SaveVideo", pos=(1760, 100))
     g.connect(ckpt, "MODEL", track, "model")
@@ -192,7 +192,7 @@ def build_image_batch(specs):
     gvc = g.add("GetVideoComponents", pos=(340, 200))
     clip = g.add("CLIPTextEncode", pos=(340, 0), widget_values=["person"])
     det = g.add("SAM3_Detect", pos=(700, 100), widget_values=[0.5, 2, True])
-    rend = g.add("YonderHUDRenderer", pos=(1060, 100), widget_values=_renderer_widget_values(specs))
+    rend = g.add("YEAHUDRenderer", pos=(1060, 100), widget_values=_renderer_widget_values(specs))
     cv = g.add("CreateVideo", pos=(1420, 100), widget_values=[24.0, 8])
     sv = g.add("SaveVideo", pos=(1760, 100))
     g.connect(ckpt, "MODEL", det, "model")
@@ -213,8 +213,8 @@ def build_image_batch(specs):
 def build_manual_annotation(specs):
     g = build_video(specs)
     # add an Annotation JSON node feeding the renderer's `annotations` input.
-    aj = g.add("YonderAnnotationJSON", pos=(700, 360))
-    rend = next(n["id"] for n in g.nodes if n["type"] == "YonderHUDRenderer")
+    aj = g.add("YEAAnnotationJSON", pos=(700, 360))
+    rend = next(n["id"] for n in g.nodes if n["type"] == "YEAHUDRenderer")
     g.connect(aj, "annotations", rend, "annotations")
     return g
 
@@ -226,10 +226,10 @@ def build_vlm_annotation(specs):
     gvc = g.add("GetVideoComponents", pos=(340, 220))
     clip = g.add("CLIPTextEncode", pos=(340, 0), widget_values=["person"])
     track = g.add("SAM3_VideoTrack", pos=(700, 120), widget_values=[0.5, 8, 1])
-    crop = g.add("YonderTrackCropExtractor", pos=(1060, 320), widget_values=[3, 0.15, 0.0, "best"])
-    prompt = g.add("YonderDetailedLabelPrompt", pos=(1060, 520))
-    builder = g.add("YonderAnnotationBuilder", pos=(1420, 320))
-    rend = g.add("YonderHUDRenderer", pos=(1420, 80), widget_values=_renderer_widget_values(specs))
+    crop = g.add("YEATrackCropExtractor", pos=(1060, 320), widget_values=[3, 0.15, 0.0, "best"])
+    prompt = g.add("YEADetailedLabelPrompt", pos=(1060, 520))
+    builder = g.add("YEAAnnotationBuilder", pos=(1420, 320))
+    rend = g.add("YEAHUDRenderer", pos=(1420, 80), widget_values=_renderer_widget_values(specs))
     cv = g.add("CreateVideo", pos=(1780, 80), widget_values=[24.0, 8])
     sv = g.add("SaveVideo", pos=(2120, 80))
     g.connect(ckpt, "MODEL", track, "model")
@@ -254,7 +254,7 @@ def build_vlm_annotation(specs):
 
 def build_dense_multi(specs):
     g = build_video(specs)
-    rend = next(n["id"] for n in g.nodes if n["type"] == "YonderHUDRenderer")
+    rend = next(n["id"] for n in g.nodes if n["type"] == "YEAHUDRenderer")
     # a second SAM3 group (e.g. faces) -> renderer.secondary_track_data_1
     ckpt = next(n["id"] for n in g.nodes if n["type"] == "CheckpointLoaderSimple")
     gvc = next(n["id"] for n in g.nodes if n["type"] == "GetVideoComponents")

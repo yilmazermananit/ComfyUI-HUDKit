@@ -1,4 +1,4 @@
-"""Unit tests for ``yonder_hud.utils`` (determinism + caching).
+"""Unit tests for ``yea_hud.utils`` (determinism + caching).
 
 Runnable two ways:
 
@@ -33,7 +33,7 @@ import hashlib  # noqa: E402
 import math  # noqa: E402
 import random  # noqa: E402
 
-from yonder_hud.utils import LRUCache, rng_for, stable_hash, unit_float  # noqa: E402
+from yea_hud.utils import LRUCache, rng_for, stable_hash, unit_float  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -376,7 +376,7 @@ def test_stable_hash_independent_of_pythonhashseed():
     expected_hash = stable_hash("person", 77, 3)
     expected_uf = unit_float("person", 77, 3)
     snippet = (
-        "from yonder_hud.utils import stable_hash, unit_float;"
+        "from yea_hud.utils import stable_hash, unit_float;"
         "print(stable_hash('person',77,3));"
         "print(repr(unit_float('person',77,3)))"
     )

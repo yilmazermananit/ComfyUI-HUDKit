@@ -1,4 +1,4 @@
-"""Unit tests for yonder_hud.captions (brief §25 caption cases).
+"""Unit tests for yea_hud.captions (brief §25 caption cases).
 
 Runnable two ways:
 
@@ -27,14 +27,14 @@ if _ROOT not in sys.path:
 
 import numpy as np  # noqa: E402  (proves no torch/PIL dependency leaks in)
 
-from yonder_hud.captions import (  # noqa: E402
+from yea_hud.captions import (  # noqa: E402
     build_template_context,
     expand_template,
     format_order_label,
     parse_captions_json,
     resolve_caption,
 )
-from yonder_hud.types import CAPTION_SOURCES, Detection  # noqa: E402
+from yea_hud.types import CAPTION_SOURCES, Detection  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

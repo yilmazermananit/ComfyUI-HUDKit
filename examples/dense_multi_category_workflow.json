@@ -237,7 +237,7 @@
     },
     {
       "id": 6,
-      "type": "YonderHUDRenderer",
+      "type": "YEAHUDRenderer",
       "pos": [
         1060,
         100
@@ -287,7 +287,7 @@
         },
         {
           "name": "annotations",
-          "type": "YONDER_ANNOTATIONS",
+          "type": "YEA_ANNOTATIONS",
           "link": null
         },
         {
@@ -394,7 +394,7 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "YonderHUDRenderer"
+        "Node name for S&R": "YEAHUDRenderer"
       },
       "widgets_values": [
         77,
@@ -523,7 +523,7 @@
         "Node name for S&R": "SaveVideo"
       },
       "widgets_values": [
-        "video/YonderHUD",
+        "video/YEAHUD",
         "auto",
         "auto"
       ]

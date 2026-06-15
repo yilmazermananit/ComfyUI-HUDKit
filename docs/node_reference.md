@@ -1,10 +1,10 @@
-# Node Reference — ComfyUI-YonderHUD
+# Node Reference — ComfyUI-YEAHUD
 
-8 nodes. Categories: `Yonder/HUD` (renderer + inspectors + mask→bbox) and
-`Yonder/HUD/Annotation` (the semantic-label layer). All register via the V3 schema
+8 nodes. Categories: `YEA/HUD` (renderer + inspectors + mask→bbox) and
+`YEA/HUD/Annotation` (the semantic-label layer). All register via the V3 schema
 (`comfy_entrypoint`); a V1 `NODE_CLASS_MAPPINGS` fallback mirrors them on older ComfyUI.
 
-## Yonder HUD Renderer  (`YonderHUDRenderer`)
+## YEA HUD Renderer  (`YEAHUDRenderer`)
 Main compositor.
 
 **Key inputs** (required): `frames` IMAGE; `seed` INT; `style_mode` COMBO
@@ -18,7 +18,7 @@ Main compositor.
 `secondary_group_label_1..3` STRING for namespacing/colors) · `bboxes` BOUNDING_BOX ·
 `masks` MASK.
 
-**Annotations** (optional): `annotations` YONDER_ANNOTATIONS (preferred) ·
+**Annotations** (optional): `annotations` YEA_ANNOTATIONS (preferred) ·
 `annotations_json` STRING · `caption_mode` COMBO (`auto/short/medium/detailed/action/
 technical/mixed`) · `label_length_mode` (`single_line/two_line/truncate/adaptive`) ·
 `label_collision_mode` (`none/hide_low_priority/reposition/reposition_and_shorten/
@@ -36,43 +36,43 @@ dense_editorial`) · `label_density` FLOAT · `max_labels_per_frame` INT ·
 **Outputs:** `images` IMAGE · `debug_preview` IMAGE (first annotated frame) ·
 `tracking_json` STRING.
 
-## Yonder Inspect SAM3 Track Data  (`YonderInspectSAM3TrackData`)
+## YEA Inspect SAM3 Track Data  (`YEAInspectSAM3TrackData`)
 In: `track_data` SAM3_TRACK_DATA. Out: `debug_json` STRING, `track_data` (pass-through).
 Logs packed_masks shape/dtype, n_frames, scores, orig_size, per-frame visibility.
 
-## Yonder Inspect Bounding Boxes  (`YonderInspectBoundingBoxes`)
+## YEA Inspect Bounding Boxes  (`YEAInspectBoundingBoxes`)
 In: `bboxes` BOUNDING_BOX (opt), `masks` MASK (opt). Out: `debug_json` STRING, `bboxes`
 (pass-through). Summarizes type/nesting/keys/per-frame counts/coord format (bounded).
 
-## Yonder Mask to Native BBoxes  (`YonderMaskToNativeBBoxes`)
+## YEA Mask to Native BBoxes  (`YEAMaskToNativeBBoxes`)
 In: `masks` MASK, `threshold` FLOAT, `min_area` INT, `merge_distance` INT.
 Out: `bboxes` BOUNDING_BOX (native `list[list[{x,y,width,height,score}]]`), `debug_json` STRING.
 
-## Yonder Annotation JSON  (`YonderAnnotationJSON`)
+## YEA Annotation JSON  (`YEAAnnotationJSON`)
 In: `annotations_json` STRING (multiline), `strict` BOOL. Out: `annotations`
-YONDER_ANNOTATIONS, `normalized_json` STRING, `validation_report` STRING.
+YEA_ANNOTATIONS, `normalized_json` STRING, `validation_report` STRING.
 
-## Yonder Annotation Builder  (`YonderAnnotationBuilder`)
+## YEA Annotation Builder  (`YEAAnnotationBuilder`)
 In (all opt): `track_data` SAM3_TRACK_DATA, `crop_manifest_json`, `captions_json`
 (VLM list OR by-track dict), `manual_annotations_json`, `secondary_detections_json`,
 `default_category`, `primary_group_label`, `label_template`. Out: `annotations`,
 `annotations_json`, `validation_report`. Reduces per-crop VLM responses to one
 consensus label per track.
 
-## Yonder Track Crop Extractor  (`YonderTrackCropExtractor`)
+## YEA Track Crop Extractor  (`YEATrackCropExtractor`)
 In: `frames` IMAGE, `track_data` SAM3_TRACK_DATA, `samples_per_track` INT,
 `crop_padding` FLOAT, `minimum_track_area` FLOAT, `selection_mode` COMBO
 (`best/largest/sharpest/most_centered/multi_sample`). Out: `crops` IMAGE,
 `crop_manifest_json` STRING, `contact_sheet` IMAGE, `track_indices_json` STRING.
 
-## Yonder Detailed Label Prompt  (`YonderDetailedLabelPrompt`)
+## YEA Detailed Label Prompt  (`YEADetailedLabelPrompt`)
 In: `detail_level` COMBO, `include_clothing/action/objects/scene/visible_details` BOOL,
 `maximum_words` INT, `uppercase` BOOL. Out: `system_prompt` STRING, `user_prompt`
 STRING, `json_schema` STRING. **No network** — emits text only.
 
 ---
 
-## YONDER_ANNOTATIONS schema (v1)
+## YEA_ANNOTATIONS schema (v1)
 ```json
 {
   "version": 1,

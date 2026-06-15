@@ -1,14 +1,14 @@
-"""ComfyUI-YonderHUD — node registration entry point.
+"""ComfyUI-YEAHUD — node registration entry point.
 
 Prefers the V3 schema (``comfy_api`` + ``comfy_entrypoint``), exactly like the
 native SAM3 nodes. If ``comfy_api`` is unavailable (older ComfyUI), falls back to
 V1 ``NODE_CLASS_MAPPINGS``. The loader prefers NODE_CLASS_MAPPINGS over
 comfy_entrypoint, so we define ONLY ONE of them depending on what's available.
-Business logic lives in ``yonder_hud``; this file does registration only.
+Business logic lives in ``yea_hud``; this file does registration only.
 
 ComfyUI loads custom-node packages via ``importlib.spec_from_file_location`` under a
 mangled module name and does NOT add the package directory to ``sys.path``. Our
-node modules use absolute imports (``from yonder_hud import ...``), so we insert the
+node modules use absolute imports (``from yea_hud import ...``), so we insert the
 package directory onto ``sys.path`` first — the standard custom-node pattern.
 """
 
@@ -16,7 +16,7 @@ import logging
 import os
 import sys
 
-logger = logging.getLogger("YonderHUD")
+logger = logging.getLogger("YEAHUD")
 
 _PKG_DIR = os.path.dirname(os.path.abspath(__file__))
 if _PKG_DIR not in sys.path:
@@ -47,17 +47,17 @@ if _HAS_V3:
                           _AnnotationJSON, _AnnotationBuilder, _CropExtractor, _LabelPrompt)
               if n is not None]
 
-    class YonderHUDExtension(ComfyExtension):
+    class YEAHUDExtension(ComfyExtension):
         async def get_node_list(self):
             return _NODES
 
-    async def comfy_entrypoint() -> "YonderHUDExtension":
-        return YonderHUDExtension()
+    async def comfy_entrypoint() -> "YEAHUDExtension":
+        return YEAHUDExtension()
 
     __all__ += ["comfy_entrypoint"]
-    logger.info("ComfyUI-YonderHUD: registered %d V3 nodes (category Yonder/HUD).", len(_NODES))
+    logger.info("ComfyUI-YEAHUD: registered %d V3 nodes (category YEA/HUD).", len(_NODES))
 else:
     from nodes.v1_compat import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS  # noqa: F401
 
     __all__ += ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
-    logger.info("ComfyUI-YonderHUD: comfy_api V3 unavailable; registered V1 NODE_CLASS_MAPPINGS.")
+    logger.info("ComfyUI-YEAHUD: comfy_api V3 unavailable; registered V1 NODE_CLASS_MAPPINGS.")

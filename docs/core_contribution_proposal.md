@@ -1,7 +1,7 @@
 # Proposal (optional) — "SAM3 Track Overlay" as a ComfyUI core node
 
 > Phase-4 evaluation (brief §28 / cloud strategy). A **non-branded, minimal** subset
-> of YonderHUD proposed for `comfy_extras`, so it ships with Cloud's base ComfyUI
+> of YEAHUD proposed for `comfy_extras`, so it ships with Cloud's base ComfyUI
 > (the only route that sidesteps the undocumented custom-node curation gate).
 
 ## Rationale
@@ -27,12 +27,12 @@ matching SAM3's "extra-dependency-free, single-GPU" design.
 ## What is intentionally LEFT OUT of the core version
 User PNG frame/target assets, alpha recovery, recolor pipeline, the IoU fallback
 tracker, BOUNDING_BOX/MASK adapters, caption JSON/template system, asset packs.
-These stay in the branded **ComfyUI-YonderHUD** custom pack (richer, Pillow-based).
+These stay in the branded **ComfyUI-YEAHUD** custom pack (richer, Pillow-based).
 
 ## Path
 1. Open a discussion/RFC referencing PR #13408 (SAM3) and `SAM3_TrackPreview`.
 2. Offer `SAM3_TrackOverlay` as a focused PR (torch-only, V3 schema, tests).
-3. Keep YonderHUD as the full-featured superset on the Registry.
+3. Keep YEAHUD as the full-featured superset on the Registry.
 
 > This is a proposal only — not implemented in this repo. The branded renderer is the
 > shipped deliverable; the core node is a future contribution route to guaranteed Cloud presence.

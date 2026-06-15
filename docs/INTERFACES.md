@@ -1,6 +1,6 @@
-# INTERFACES — yonder_hud module contract (v1)
+# INTERFACES — yea_hud module contract (v1)
 
-Every module below lives in `yonder_hud/` and is **schema-agnostic** (no ComfyUI
+Every module below lives in `yea_hud/` and is **schema-agnostic** (no ComfyUI
 imports). Allowed deps: stdlib, `numpy`, `PIL` (Pillow), `torch` (already in the
 ComfyUI env). Each module imports `from .types import ...`. Implement EXACTLY these
 public signatures so the node layer and tests wire together with zero drift. No
@@ -168,7 +168,7 @@ def mask_to_detections(mask_hw, frame_index:int, *, threshold:float, min_area:in
     # optional cv2 fast path if importable). merge components whose boxes are within merge_distance.
     # drop area<min_area. returns Detections (xyxy) with source_index = component order.
 def masks_to_native_bboxes(mask, threshold:float, min_area:int, merge_distance:int) -> list[list[dict]]
-    # for the 'Yonder Mask to Native BBoxes' node: returns native BOUNDING_BOX value
+    # for the 'YEA Mask to Native BBoxes' node: returns native BOUNDING_BOX value
     # (list[list[{"x","y","width","height","score":1.0}]]) — abs-pixel xywh. NO custom type.
 ```
 

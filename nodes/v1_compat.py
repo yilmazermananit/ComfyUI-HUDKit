@@ -8,12 +8,12 @@ single source of truth (brief §20). All 8 nodes are mirrored.
 
 from __future__ import annotations
 
-from yonder_hud.types import (
+from yea_hud.types import (
     STYLE_MODES, SMALL_OBJECT_MODES, CAPTION_SOURCES, LABEL_TEXT_COLOR_MODES,
     ASSET_FIT_MODES, PADDING_MODES, DEFAULTS,
 )
-from yonder_hud.annotations import CAPTION_MODES
-from yonder_hud.label_placement import COLLISION_MODES
+from yea_hud.annotations import CAPTION_MODES
+from yea_hud.label_placement import COLLISION_MODES
 from .hud_renderer import run_hud_renderer, DISPLAY_NAME as R_NAME, NODE_ID as R_ID, CATEGORY
 from .inspect_bbox import run_inspect_bbox, DISPLAY_NAME as IB_NAME, NODE_ID as IB_ID
 from .inspect_track_data import run_inspect_track_data, DISPLAY_NAME as IT_NAME, NODE_ID as IT_ID
@@ -23,13 +23,13 @@ from .annotation_builder import run_annotation_builder, DISPLAY_NAME as AB_NAME,
 from .track_crop_extractor import run_track_crop_extractor, DISPLAY_NAME as CE_NAME, NODE_ID as CE_ID
 from .detailed_label_prompt import run_detailed_label_prompt, DISPLAY_NAME as LP_NAME, NODE_ID as LP_ID
 
-ANN_CAT = "Yonder/HUD/Annotation"
+ANN_CAT = "YEA/HUD/Annotation"
 _F = lambda v: ("FLOAT", {"default": v, "min": 0.0, "max": 1.0, "step": 0.01})
 LABEL_LENGTH_MODES = ["single_line", "two_line", "truncate", "adaptive"]
 COLOR_MODES = ["track_random", "category_based", "source_based", "fixed_palette", "annotation_override"]
 
 
-class YonderHUDRendererV1:
+class YEAHUDRendererV1:
     CATEGORY = CATEGORY
     FUNCTION = "run"
     RETURN_TYPES = ("IMAGE", "IMAGE", "STRING")
@@ -66,7 +66,7 @@ class YonderHUDRendererV1:
             "secondary_group_label_3": ("STRING", {"default": ""}),
             "bboxes": ("BOUNDING_BOX",),
             "masks": ("MASK",),
-            "annotations": ("YONDER_ANNOTATIONS",),
+            "annotations": ("YEA_ANNOTATIONS",),
             "annotations_json": ("STRING", {"default": "", "multiline": True}),
             "caption_mode": (list(CAPTION_MODES), {"default": "auto"}),
             "label_length_mode": (LABEL_LENGTH_MODES, {"default": "adaptive"}),
@@ -149,7 +149,7 @@ class YonderHUDRendererV1:
             interrupt=mm.throw_exception_if_processing_interrupted)
 
 
-class YonderInspectBoundingBoxesV1:
+class YEAInspectBoundingBoxesV1:
     CATEGORY = CATEGORY; FUNCTION = "run"
     RETURN_TYPES = ("STRING", "BOUNDING_BOX"); RETURN_NAMES = ("debug_json", "bboxes"); OUTPUT_NODE = True
 
@@ -161,7 +161,7 @@ class YonderInspectBoundingBoxesV1:
         return (run_inspect_bbox(bboxes, masks), bboxes)
 
 
-class YonderInspectSAM3TrackDataV1:
+class YEAInspectSAM3TrackDataV1:
     CATEGORY = CATEGORY; FUNCTION = "run"
     RETURN_TYPES = ("STRING", "SAM3_TRACK_DATA"); RETURN_NAMES = ("debug_json", "track_data"); OUTPUT_NODE = True
 
@@ -173,7 +173,7 @@ class YonderInspectSAM3TrackDataV1:
         return (run_inspect_track_data(track_data), track_data)
 
 
-class YonderMaskToNativeBBoxesV1:
+class YEAMaskToNativeBBoxesV1:
     CATEGORY = CATEGORY; FUNCTION = "run"
     RETURN_TYPES = ("BOUNDING_BOX", "STRING"); RETURN_NAMES = ("bboxes", "debug_json")
 
@@ -190,9 +190,9 @@ class YonderMaskToNativeBBoxesV1:
         return run_mask_to_bbox(masks, threshold, min_area, merge_distance)
 
 
-class YonderAnnotationJSONV1:
+class YEAAnnotationJSONV1:
     CATEGORY = ANN_CAT; FUNCTION = "run"
-    RETURN_TYPES = ("YONDER_ANNOTATIONS", "STRING", "STRING")
+    RETURN_TYPES = ("YEA_ANNOTATIONS", "STRING", "STRING")
     RETURN_NAMES = ("annotations", "normalized_json", "validation_report")
 
     @classmethod
@@ -204,9 +204,9 @@ class YonderAnnotationJSONV1:
         return run_annotation_json(annotations_json, strict=strict)
 
 
-class YonderAnnotationBuilderV1:
+class YEAAnnotationBuilderV1:
     CATEGORY = ANN_CAT; FUNCTION = "run"
-    RETURN_TYPES = ("YONDER_ANNOTATIONS", "STRING", "STRING")
+    RETURN_TYPES = ("YEA_ANNOTATIONS", "STRING", "STRING")
     RETURN_NAMES = ("annotations", "annotations_json", "validation_report")
 
     @classmethod
@@ -230,7 +230,7 @@ class YonderAnnotationBuilderV1:
                                       default_category, label_template, primary_group_label)
 
 
-class YonderTrackCropExtractorV1:
+class YEATrackCropExtractorV1:
     CATEGORY = ANN_CAT; FUNCTION = "run"
     RETURN_TYPES = ("IMAGE", "STRING", "IMAGE", "STRING")
     RETURN_NAMES = ("crops", "crop_manifest_json", "contact_sheet", "track_indices_json")
@@ -252,7 +252,7 @@ class YonderTrackCropExtractorV1:
                                         minimum_track_area, selection_mode)
 
 
-class YonderDetailedLabelPromptV1:
+class YEADetailedLabelPromptV1:
     CATEGORY = ANN_CAT; FUNCTION = "run"
     RETURN_TYPES = ("STRING", "STRING", "STRING")
     RETURN_NAMES = ("system_prompt", "user_prompt", "json_schema")
@@ -279,14 +279,14 @@ class YonderDetailedLabelPromptV1:
 
 
 NODE_CLASS_MAPPINGS = {
-    R_ID: YonderHUDRendererV1,
-    IT_ID: YonderInspectSAM3TrackDataV1,
-    IB_ID: YonderInspectBoundingBoxesV1,
-    M_ID: YonderMaskToNativeBBoxesV1,
-    AJ_ID: YonderAnnotationJSONV1,
-    AB_ID: YonderAnnotationBuilderV1,
-    CE_ID: YonderTrackCropExtractorV1,
-    LP_ID: YonderDetailedLabelPromptV1,
+    R_ID: YEAHUDRendererV1,
+    IT_ID: YEAInspectSAM3TrackDataV1,
+    IB_ID: YEAInspectBoundingBoxesV1,
+    M_ID: YEAMaskToNativeBBoxesV1,
+    AJ_ID: YEAAnnotationJSONV1,
+    AB_ID: YEAAnnotationBuilderV1,
+    CE_ID: YEATrackCropExtractorV1,
+    LP_ID: YEADetailedLabelPromptV1,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     R_ID: R_NAME, IT_ID: IT_NAME, IB_ID: IB_NAME, M_ID: M_NAME,

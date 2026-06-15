@@ -242,7 +242,7 @@ def adapt_track_data(
     nothing is renumbered. The mask extent is computed at the tracker
     resolution ``(H_m, W_m)`` and scaled to ``orig_size (H, W)`` by
     ``(H/H_m, W/W_m)``, then normalized / clamped / degenerate-dropped via
-    :mod:`yonder_hud.geometry`.
+    :mod:`yea_hud.geometry`.
 
     Parameters
     ----------

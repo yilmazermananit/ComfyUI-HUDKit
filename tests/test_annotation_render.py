@@ -1,6 +1,6 @@
 """End-to-end annotation rendering tests (the dense semantic-label feature).
 
-Drives run_hud_renderer with native SAM3_TRACK_DATA + YONDER_ANNOTATIONS and checks
+Drives run_hud_renderer with native SAM3_TRACK_DATA + YEA_ANNOTATIONS and checks
 that stable detailed labels, child annotations, frame annotations, multi-group merge,
 dense labels and the no-annotation fallback all render without error and behave per
 the brief (stable text, hierarchy, collision-safe, generic fallback).
@@ -18,7 +18,7 @@ if ROOT not in sys.path:
 import torch
 
 from nodes.hud_renderer import run_hud_renderer
-from yonder_hud.annotations import AnnotationSet, TrackAnnotation
+from yea_hud.annotations import AnnotationSet, TrackAnnotation
 
 KW = dict(seed=77, style_mode="mixed", max_objects=64, display_probability=1.0, padding_x=6,
           padding_y=6, smoothing=0.5, track_iou_threshold=0.25, track_memory_frames=6,

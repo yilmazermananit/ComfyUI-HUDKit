@@ -1,8 +1,8 @@
 """assets.py — user PNG asset slot management (brief §16).
 
 Schema-agnostic. Imports only the Python standard library, :mod:`numpy`, and the
-sibling :mod:`yonder_hud` modules :mod:`alpha`, :mod:`palette`, :mod:`utils`
-(plus :mod:`yonder_hud.types` for shared constants). It performs **no** ComfyUI
+sibling :mod:`yea_hud` modules :mod:`alpha`, :mod:`palette`, :mod:`utils`
+(plus :mod:`yea_hud.types` for shared constants). It performs **no** ComfyUI
 imports, no network, no subprocess, no ``eval``/``exec``, and no file IO — pure
 deterministic compute, safe to run inside Comfy Cloud.
 
@@ -19,14 +19,14 @@ compact, deterministic asset service for the tracker / compositor:
 
 * It builds **eligible index lists** of the *connected* slots only. The tracker
   picks ``frame_asset_id`` uniformly in ``[0, n_frame_assets)`` (the *eligible*
-  index space — see ``yonder_hud.tracker.Tracker.assign_style``), so the eligible
+  index space — see ``yea_hud.tracker.Tracker.assign_style``), so the eligible
   numbering must be a contiguous ``0..count-1`` over connected slots and never
   expose the gaps left by unconnected sockets.
 * :meth:`frame_rgba` / :meth:`target_rgba` recolor a connected asset to a palette
   color and resize it to (approximately) the requested pixel size, returning a
   straight-alpha RGBA ``float32 [h, w, 4]`` overlay — or ``None`` when the slot
   cannot be rendered.
-* Results are cached in a :class:`yonder_hud.utils.LRUCache` keyed by
+* Results are cached in a :class:`yea_hud.utils.LRUCache` keyed by
   ``(eligible_id, w_bucket, h_bucket, color_id)`` so the per-frame, per-track
   recolor+resize work (the expensive part) is reused across the many frames where
   a track's box only wobbles by a pixel or two.
@@ -38,9 +38,9 @@ A slot's pair is one of:
 * ``None`` (or ``(None, None)``) — **nothing connected** -> not eligible, never
   drawn, does not occupy an eligible index.
 * ``(image, mask)`` — **image + mask connected** -> eligible; alpha is recovered
-  from the ComfyUI Load Image MASK via :func:`yonder_hud.alpha.recover_alpha`.
+  from the ComfyUI Load Image MASK via :func:`yea_hud.alpha.recover_alpha`.
 * ``(image, None)`` — **image connected, mask not** -> eligible; alpha falls back
-  to the image *luminance* (:func:`yonder_hud.alpha.luminance_alpha`).
+  to the image *luminance* (:func:`yea_hud.alpha.luminance_alpha`).
 * ``(None, mask)`` — **mask connected, image not** -> eligible (the socket *is*
   connected, so it occupies an eligible index the tracker may pick), but the asset
   is **NOT rendered**: :meth:`frame_rgba` / :meth:`target_rgba` return ``None``.
@@ -173,10 +173,10 @@ class AssetBank:
             slot; either tuple element may be ``None``).
         target_pairs: Per-slot target ``(image, mask)`` pairs, same convention.
         trim: When ``True``, each rendered asset is cropped to its alpha bounding
-            box (:func:`yonder_hud.alpha.trim_transparent`) before resize, removing
+            box (:func:`yea_hud.alpha.trim_transparent`) before resize, removing
             transparent margins so the artwork fills the placement box.
         fit_frame: Frame asset fit mode (one of
-            :data:`yonder_hud.types.ASSET_FIT_MODES`). Stored for the
+            :data:`yea_hud.types.ASSET_FIT_MODES`). Stored for the
             compositor's placement-rect computation; the bank itself resizes to the
             exact requested size (the compositor decides the box via
             ``geometry.asset_rect``). An unknown value is coerced to ``'stretch'``.

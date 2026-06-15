@@ -4,7 +4,7 @@ Schema-agnostic. Pure deterministic compute only: no ComfyUI imports, no
 network, no subprocess, no file I/O, no eval/exec.
 
 This module is the boundary between ComfyUI's native ``BOUNDING_BOX`` value and
-the renderer's internal :class:`~yonder_hud.types.Detection` model. It turns the
+the renderer's internal :class:`~yea_hud.types.Detection` model. It turns the
 loose, multi-shaped native value into a clean per-frame
 ``list[list[Detection]]`` of absolute-pixel **xyxy** boxes, with all the
 defensive normalization the brief (§3, §4.3) and ``docs/runtime_findings.md``
@@ -42,7 +42,7 @@ mix tools — brief §4.3):
 Output guarantees (every emitted :class:`Detection`):
 
 * ``xyxy`` absolute pixels, swapped/clamped to ``[0,W] x [0,H]``,
-  ``x2 >= x1`` and ``y2 >= y1`` (via :mod:`yonder_hud.geometry`).
+  ``x2 >= x1`` and ``y2 >= y1`` (via :mod:`yea_hud.geometry`).
 * degenerate boxes (width/height ``< 1px`` after clamping) are dropped.
 * ``frame_index`` set to the output-frame slot; ``source_index`` set to the
   box's position within its source frame list (BEFORE degenerate filtering, so

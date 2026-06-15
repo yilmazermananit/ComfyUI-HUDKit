@@ -1,4 +1,4 @@
-"""Tests for ``yonder_hud.compositor`` (brief §17 / §25.4 compositor cases).
+"""Tests for ``yea_hud.compositor`` (brief §17 / §25.4 compositor cases).
 
 Runnable two ways:
 
@@ -47,10 +47,10 @@ _REPO_ROOT = os.path.dirname(_THIS_DIR)
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from yonder_hud import palette as palette_mod  # noqa: E402
-from yonder_hud.assets import AssetBank  # noqa: E402
-from yonder_hud.compositor import composite_rgba_over, render_frames  # noqa: E402
-from yonder_hud.types import RenderItem, TrackStyle  # noqa: E402
+from yea_hud import palette as palette_mod  # noqa: E402
+from yea_hud.assets import AssetBank  # noqa: E402
+from yea_hud.compositor import composite_rgba_over, render_frames  # noqa: E402
+from yea_hud.types import RenderItem, TrackStyle  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -88,7 +88,7 @@ def _white_on_transparent_pair(h: int = 16, w: int = 16):
 
     The PNG is white RGB everywhere; the alpha is 1 inside a central square and 0
     outside. ComfyUI's Load Image emits ``MASK = 1 - alpha`` (see
-    ``yonder_hud.alpha`` docstring), so we build the mask that way; the asset
+    ``yea_hud.alpha`` docstring), so we build the mask that way; the asset
     bank then recovers the true alpha as ``1 - mask``.
     """
     img = torch.ones((1, h, w, 3), dtype=torch.float32)  # white

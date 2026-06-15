@@ -1,9 +1,9 @@
-"""Caption text resolution for ComfyUI-YonderHUD (brief §13).
+"""Caption text resolution for ComfyUI-YEAHUD (brief §13).
 
 This module turns a per-detection rendering request into the *raw* caption
 string that the HUD label strip will display. It is intentionally
 schema-agnostic (no ComfyUI imports) and depends only on the Python standard
-library plus :mod:`yonder_hud.types`.
+library plus :mod:`yea_hud.types`.
 
 Design contract (see ``docs/INTERFACES.md`` → "## captions.py"):
 
@@ -14,7 +14,7 @@ Design contract (see ``docs/INTERFACES.md`` → "## captions.py"):
   - by-track   ``{"1": "ALPHA", "2": "BRAVO"}`` (top-level string keys)
   - by-frame   ``{"frames": {"0": ["A", "B"], "12": "SOLO"}}``
 
-* :func:`resolve_caption` maps one of :data:`yonder_hud.types.CAPTION_SOURCES`
+* :func:`resolve_caption` maps one of :data:`yea_hud.types.CAPTION_SOURCES`
   onto an actual string. It must **never raise** on bad input — most notably
   on a malformed ``template`` (an unknown ``{token}`` is left literal, an
   unbalanced brace degrades gracefully). It returns the *raw* string; the
@@ -24,7 +24,7 @@ Design contract (see ``docs/INTERFACES.md`` → "## captions.py"):
   renderer shows display order. The caller uppercases the final result.
 
 Coordinate convention: detections carry absolute-pixel ``xyxy`` (see
-:class:`yonder_hud.types.Detection`). Template ``{x}{y}{w}{h}`` therefore expand
+:class:`yea_hud.types.Detection`). Template ``{x}{y}{w}{h}`` therefore expand
 to the box top-left corner and its width/height in integer pixels.
 """
 
@@ -344,7 +344,7 @@ def resolve_caption(
 ) -> str:
     """Resolve the raw caption string for one detection.
 
-    The ``source`` selects one of :data:`yonder_hud.types.CAPTION_SOURCES`:
+    The ``source`` selects one of :data:`yea_hud.types.CAPTION_SOURCES`:
 
     ================= =========================================================
     source            behaviour

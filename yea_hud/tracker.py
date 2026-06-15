@@ -1,7 +1,7 @@
 """tracker.py — identity unification, smoothing and lifecycle (brief §10, §11).
 
-This module turns a per-frame stream of :class:`~yonder_hud.types.Detection`
-objects into stable, smoothed :class:`~yonder_hud.types.Track` identities and a
+This module turns a per-frame stream of :class:`~yea_hud.types.Detection`
+objects into stable, smoothed :class:`~yea_hud.types.Track` identities and a
 deterministic visual style for each one. It is the seam that makes the HUD look
 *temporally coherent* (the same subject keeps the same id / colour / primitive
 across frames) and *seed-stable* (a given ``(seed, track_id)`` always produces the
@@ -20,8 +20,8 @@ Two identity sources, in priority order (see ``docs/runtime_findings.md`` §3.5)
    new tracks with monotonically increasing ids that are **never reused**.
 
 Smoothing is an exponential moving average over the matched box
-(:func:`yonder_hud.geometry.ema_box`), optionally motion-adaptive
-(:func:`yonder_hud.geometry.adaptive_alpha`). Tracks that stop being seen *age* and
+(:func:`yea_hud.geometry.ema_box`), optionally motion-adaptive
+(:func:`yea_hud.geometry.adaptive_alpha`). Tracks that stop being seen *age* and
 are killed after ``memory_frames`` frames of absence (TTL lifecycle).
 
 Style assignment (:meth:`Tracker.assign_style`) is derived once per track from
@@ -32,8 +32,8 @@ single primitive (``'corners'``/``'outline'``/``'solid'``/``'target_only'``/
 ``'mixed'`` visual language.
 
 The module is schema-agnostic and Comfy-Cloud-safe: it imports only the Python
-standard library, :mod:`yonder_hud.types` and the pure sibling helpers
-:mod:`yonder_hud.geometry`, :mod:`yonder_hud.palette` and :mod:`yonder_hud.utils`.
+standard library, :mod:`yea_hud.types` and the pure sibling helpers
+:mod:`yea_hud.geometry`, :mod:`yea_hud.palette` and :mod:`yea_hud.utils`.
 No ComfyUI imports, no torch/PIL needed, no I/O, no networking, no subprocess, no
 ``eval``/``exec`` — pure deterministic compute.
 
@@ -154,10 +154,10 @@ class Tracker:
     A single :class:`Tracker` instance is created per render run and fed one frame
     at a time via :meth:`update`. It owns:
 
-    * the live :class:`~yonder_hud.types.Track` table (keyed by ``track_id``),
+    * the live :class:`~yea_hud.types.Track` table (keyed by ``track_id``),
     * a monotonically increasing id counter for the greedy path (ids are **never
       reused**, even after a track dies),
-    * the per-track :class:`~yonder_hud.types.TrackStyle` cache.
+    * the per-track :class:`~yea_hud.types.TrackStyle` cache.
 
     The constructor parameters mirror the user-facing node widgets (brief §23) and
     the binding signature in ``docs/INTERFACES.md``.
@@ -179,19 +179,19 @@ class Tracker:
         frames is removed. ``0`` kills a track the first frame it is missing.
     smoothing : float
         UI smoothing in ``0..1`` (mapped to an EMA alpha via
-        :func:`yonder_hud.geometry.smoothing_to_alpha`). ``0`` = raw, ``~0.9`` =
+        :func:`yea_hud.geometry.smoothing_to_alpha`). ``0`` = raw, ``~0.9`` =
         very smooth/laggy. Applies on BOTH the passthrough and greedy paths.
     palette : sequence
         Resolved palette (list of ``(r,g,b)`` 0..1), e.g. from
-        :func:`yonder_hud.palette.resolve_palette`. Used by
-        :func:`yonder_hud.palette.color_for_track` to pick a stable ``color_id``.
+        :func:`yea_hud.palette.resolve_palette`. Used by
+        :func:`yea_hud.palette.color_for_track` to pick a stable ``color_id``.
     n_frame_assets : int
         Number of eligible (connected) frame-PNG assets. ``frame_asset_id`` is in
         ``[0, n_frame_assets)`` or ``-1`` when none / no assets.
     n_target_assets : int
         Number of eligible target-PNG assets (``target_asset_id`` analogously).
     style_mode : str
-        One of :data:`yonder_hud.types.STYLE_MODES`. Forced modes pin every track
+        One of :data:`yea_hud.types.STYLE_MODES`. Forced modes pin every track
         to a single primitive; ``'mixed'`` lets the hash choose.
     display_probability : float
         Probability (per track, stable) that a track is shown at all. A track with
@@ -208,7 +208,7 @@ class Tracker:
         centroid gating and adaptive smoothing).
     adaptive : bool
         When ``True``, the EMA alpha is motion-adaptive
-        (:func:`yonder_hud.geometry.adaptive_alpha`): fast motion snaps, slow
+        (:func:`yea_hud.geometry.adaptive_alpha`): fast motion snaps, slow
         motion is smoothed hard. When ``False``, a constant alpha is used.
     """
 
@@ -294,7 +294,7 @@ class Tracker:
     # ------------------------------------------------------------------
 
     def assign_style(self, track_id: TrackId) -> TrackStyle:
-        """Return the deterministic :class:`~yonder_hud.types.TrackStyle` for a track.
+        """Return the deterministic :class:`~yea_hud.types.TrackStyle` for a track.
 
         The style is derived purely from ``stable_hash(self.seed, track_id, <stream>)``
         for several independent named sub-streams, so it is identical on every run /
@@ -304,7 +304,7 @@ class Tracker:
 
         Fields, and how they are chosen:
 
-        * ``color_id`` — :func:`yonder_hud.palette.color_for_track` index.
+        * ``color_id`` — :func:`yea_hud.palette.color_for_track` index.
         * ``primitive_style`` — forced by ``style_mode`` (see
           :data:`_FORCED_PRIMITIVE`) or, in ``'mixed'``/asset/procedural modes,
           picked from :data:`_MIXED_PRIMITIVES` by hash. ``'assets_only'`` uses a
@@ -328,7 +328,7 @@ class Tracker:
             track_id: The track identity (``int`` or ``str``).
 
         Returns:
-            The cached :class:`~yonder_hud.types.TrackStyle` for ``track_id``.
+            The cached :class:`~yea_hud.types.TrackStyle` for ``track_id``.
         """
         cached = self._style_cache.get(track_id)
         if cached is not None:
@@ -470,7 +470,7 @@ class Tracker:
         ``last_box`` / ``last_seen_frame`` / ``age`` are advanced and
         ``missing_frames`` reset to 0. Tracks that were not seen this frame have
         ``missing_frames`` incremented and are removed once that exceeds
-        ``memory_frames`` (TTL). A track's :class:`~yonder_hud.types.TrackStyle` is
+        ``memory_frames`` (TTL). A track's :class:`~yea_hud.types.TrackStyle` is
         assigned once on first sight via :meth:`assign_style`.
 
         Args:

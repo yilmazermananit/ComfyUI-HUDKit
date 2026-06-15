@@ -1,4 +1,4 @@
-"""Unit tests for yonder_hud.geometry.
+"""Unit tests for yea_hud.geometry.
 
 Runnable BOTH ways:
 
@@ -24,8 +24,8 @@ if _ROOT not in sys.path:
 import numpy as np  # noqa: E402  (synthetic-fixture dtype coverage)
 import torch  # noqa: E402  (verify 0-d tensor scalars are accepted)
 
-from yonder_hud import geometry as G  # noqa: E402
-from yonder_hud.types import Box  # noqa: E402  (alias identity check)
+from yea_hud import geometry as G  # noqa: E402
+from yea_hud.types import Box  # noqa: E402  (alias identity check)
 
 
 EPS = 1e-6

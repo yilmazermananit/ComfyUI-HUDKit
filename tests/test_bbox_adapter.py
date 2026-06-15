@@ -1,4 +1,4 @@
-"""Unit tests for yonder_hud.bbox_adapter.
+"""Unit tests for yea_hud.bbox_adapter.
 
 Runnable BOTH ways:
 
@@ -26,8 +26,8 @@ if _ROOT not in sys.path:
 import numpy as np  # noqa: E402  (defensive ndarray-box coverage)
 import torch  # noqa: E402  (defensive tensor-box coverage)
 
-from yonder_hud import bbox_adapter as BA  # noqa: E402
-from yonder_hud.types import Detection  # noqa: E402
+from yea_hud import bbox_adapter as BA  # noqa: E402
+from yea_hud.types import Detection  # noqa: E402
 
 
 EPS = 1e-4

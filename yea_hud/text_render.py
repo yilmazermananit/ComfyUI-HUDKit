@@ -1,7 +1,7 @@
 """text_render.py — font loading + caption label strips (brief §13.5).
 
 Schema-agnostic. Depends only on the Python standard library, :mod:`numpy`,
-:mod:`PIL` (Pillow) and :mod:`yonder_hud.utils` / :mod:`yonder_hud.types`. It
+:mod:`PIL` (Pillow) and :mod:`yea_hud.utils` / :mod:`yea_hud.types`. It
 performs **no** ComfyUI imports, no network, no subprocess, no ``eval``/``exec``,
 and no arbitrary-user-path file IO — pure deterministic compute that is safe to
 run inside Comfy Cloud.
@@ -32,9 +32,9 @@ Color / array conventions (see ``docs/INTERFACES.md``)
 ------------------------------------------------------
 * RGB colors are ``(r, g, b)`` floats in ``0..1``.
 * The returned strip is numpy ``float32 [h, w, 4]`` RGBA with **straight**
-  (non-premultiplied) alpha, matching :mod:`yonder_hud.alpha` overlays.
+  (non-premultiplied) alpha, matching :mod:`yea_hud.alpha` overlays.
 * Uppercasing of caption text is the *caller's* responsibility (see
-  :mod:`yonder_hud.captions`); this module renders whatever string it is given.
+  :mod:`yea_hud.captions`); this module renders whatever string it is given.
 """
 
 from __future__ import annotations
@@ -183,7 +183,7 @@ def get_font(size: int, font_path: Optional[str] = None) -> "ImageFont.ImageFont
        **never required** and the function always returns a usable font.
 
     The chosen font for a given ``(font_path, size)`` is cached in a module-level
-    :class:`~yonder_hud.utils.LRUCache`, so repeated calls (one per frame, per
+    :class:`~yea_hud.utils.LRUCache`, so repeated calls (one per frame, per
     track) are O(1) and return the *same* object.
 
     Args:
@@ -440,13 +440,13 @@ def render_label_strip(
     * the ``text`` drawn in ``fg_rgb`` (fully opaque) inset by ``pad``.
 
     Straight (non-premultiplied) alpha is used throughout, matching the overlay
-    convention in :mod:`yonder_hud.alpha` and :mod:`yonder_hud.compositor`: the
+    convention in :mod:`yea_hud.alpha` and :mod:`yea_hud.compositor`: the
     background fills alpha ``bg_opacity`` and the text pixels raise alpha toward
     ``1.0`` where glyphs are inked (so anti-aliased text edges blend correctly
     over whatever the strip is later composited onto).
 
     The text is rendered in whatever case it is given — **uppercasing is the
-    caller's responsibility** (see :mod:`yonder_hud.captions`). The font should be
+    caller's responsibility** (see :mod:`yea_hud.captions`). The font should be
     a monospace from :func:`get_font` for the intended HUD look, but any PIL font
     works.
 

@@ -1,4 +1,4 @@
-"""Tests for ``yonder_hud.alpha`` (brief §25.2).
+"""Tests for ``yea_hud.alpha`` (brief §25.2).
 
 Runnable two ways:
 
@@ -26,7 +26,7 @@ if _REPO_ROOT not in sys.path:
 
 import torch  # noqa: E402  (allowed dep; imported after sys.path fix)
 
-from yonder_hud import alpha  # noqa: E402
+from yea_hud import alpha  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

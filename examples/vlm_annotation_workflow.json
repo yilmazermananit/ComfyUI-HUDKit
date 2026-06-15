@@ -237,7 +237,7 @@
     },
     {
       "id": 6,
-      "type": "YonderTrackCropExtractor",
+      "type": "YEATrackCropExtractor",
       "pos": [
         1060,
         320
@@ -290,7 +290,7 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "YonderTrackCropExtractor"
+        "Node name for S&R": "YEATrackCropExtractor"
       },
       "widgets_values": [
         3,
@@ -301,7 +301,7 @@
     },
     {
       "id": 7,
-      "type": "YonderDetailedLabelPrompt",
+      "type": "YEADetailedLabelPrompt",
       "pos": [
         1060,
         520
@@ -335,7 +335,7 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "YonderDetailedLabelPrompt"
+        "Node name for S&R": "YEADetailedLabelPrompt"
       },
       "widgets_values": [
         "detailed",
@@ -350,7 +350,7 @@
     },
     {
       "id": 8,
-      "type": "YonderAnnotationBuilder",
+      "type": "YEAAnnotationBuilder",
       "pos": [
         1420,
         320
@@ -380,7 +380,7 @@
       "outputs": [
         {
           "name": "annotations",
-          "type": "YONDER_ANNOTATIONS",
+          "type": "YEA_ANNOTATIONS",
           "links": [
             10
           ],
@@ -400,7 +400,7 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "YonderAnnotationBuilder"
+        "Node name for S&R": "YEAAnnotationBuilder"
       },
       "widgets_values": [
         "",
@@ -414,7 +414,7 @@
     },
     {
       "id": 9,
-      "type": "YonderHUDRenderer",
+      "type": "YEAHUDRenderer",
       "pos": [
         1420,
         80
@@ -464,7 +464,7 @@
         },
         {
           "name": "annotations",
-          "type": "YONDER_ANNOTATIONS",
+          "type": "YEA_ANNOTATIONS",
           "link": 10
         },
         {
@@ -571,7 +571,7 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "YonderHUDRenderer"
+        "Node name for S&R": "YEAHUDRenderer"
       },
       "widgets_values": [
         77,
@@ -700,7 +700,7 @@
         "Node name for S&R": "SaveVideo"
       },
       "widgets_values": [
-        "video/YonderHUD",
+        "video/YEAHUD",
         "auto",
         "auto"
       ]
@@ -785,7 +785,7 @@
       0,
       9,
       7,
-      "YONDER_ANNOTATIONS"
+      "YEA_ANNOTATIONS"
     ],
     [
       11,

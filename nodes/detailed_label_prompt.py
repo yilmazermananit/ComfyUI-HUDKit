@@ -1,4 +1,4 @@
-"""Yonder Detailed Label Prompt — generate a strict VLM prompt (NO network call).
+"""YEA Detailed Label Prompt — generate a strict VLM prompt (NO network call).
 
 Produces a system prompt, a user prompt and a JSON schema string that any connected
 vision-language / partner node can consume to describe a track crop. This node never
@@ -11,9 +11,9 @@ from __future__ import annotations
 
 import json
 
-DISPLAY_NAME = "Yonder Detailed Label Prompt"
-NODE_ID = "YonderDetailedLabelPrompt"
-CATEGORY = "Yonder/HUD/Annotation"
+DISPLAY_NAME = "YEA Detailed Label Prompt"
+NODE_ID = "YEADetailedLabelPrompt"
+CATEGORY = "YEA/HUD/Annotation"
 
 DETAIL_LEVELS = ("short", "medium", "detailed")
 
@@ -94,7 +94,7 @@ def run_detailed_label_prompt(detail_level="detailed", include_clothing=True, in
 try:
     from comfy_api.latest import io
 
-    class YonderDetailedLabelPrompt(io.ComfyNode):
+    class YEADetailedLabelPrompt(io.ComfyNode):
         @classmethod
         def define_schema(cls):
             return io.Schema(
@@ -133,6 +133,6 @@ try:
                 include_visible_details, maximum_words, uppercase)
             return io.NodeOutput(sp, up, schema)
 
-    NODE = YonderDetailedLabelPrompt
+    NODE = YEADetailedLabelPrompt
 except ImportError:  # pragma: no cover
     NODE = None

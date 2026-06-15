@@ -1,4 +1,4 @@
-# Runtime Findings — ComfyUI-YonderHUD Milestone 1
+# Runtime Findings — ComfyUI-YEAHUD Milestone 1
 
 > Bu doküman, renderer kodu yazılmadan **önce** gerçek ComfyUI kaynak kodundan
 > doğrulanan veri yapılarını içerir. Hiçbir yapı tahmin edilmemiştir; her madde
@@ -144,7 +144,7 @@ deterministik stil yine `hash(seed, source_track_id)` ile. BOUNDING_BOX yolunda
 `io.Custom("SAM3_TRACK_DATA").Output`. Renderer girişi `io.Custom("SAM3_TRACK_DATA").Input`
 → io_type string `"SAM3_TRACK_DATA"` birebir eşleşir → uyumlu. (nodes_sam3.py:258 ile teyit.)
 
-## 3.6 YONDER_ANNOTATIONS — yeni semantik katman (custom type, bizim tanımımız)
+## 3.6 YEA_ANNOTATIONS — yeni semantik katman (custom type, bizim tanımımız)
 
 > Genişletme (kullanıcı, 2026-06-15): SAM3 kimlik+mask verir ama **zengin betimsel
 > prose vermez**. Detaylı label'lar (örn. "SHIRTLESS MAN WITH TATTOOS KICKING SOCCER
@@ -155,9 +155,9 @@ Mimari = 3 bağımsız katman: **Tracking** (SAM3_TRACK_DATA → stabil kimlik) 
 **Annotation** (stabil track'lere label/açıklama/attribute/child region iliştir) →
 **Rendering** (PNG/procedural frame + crosshair + label strip).
 
-Yeni custom type: **`YONDER_ANNOTATIONS`** (io_type string `"YONDER_ANNOTATIONS"`),
+Yeni custom type: **`YEA_ANNOTATIONS`** (io_type string `"YEA_ANNOTATIONS"`),
 taşıma: ya `AnnotationSet` objesi ya da **JSON STRING** (evrensel uyumluluk). Şema v1
-`yonder_hud/annotations.py`'de dataclass + validator olarak. Track kimliği **namespaced**
+`yea_hud/annotations.py`'de dataclass + validator olarak. Track kimliği **namespaced**
 (`person:0`, `face:0`, `footwear:0`, `ball:0`) — çıplak index global unique değil.
 Detaylı label üretimi VLM gerektirir; core renderer'a hiçbir VLM (Florence/Qwen/Moondream)
 gömülmez — caption üretimi opsiyonel, composable workflow olarak dışarıda kalır (Cloud uyumu korunur).
@@ -210,8 +210,8 @@ float(components.frame_rate), video.get_bit_depth())`.
 LoadVideo → VIDEO
    → GetVideoComponents → images(IMAGE) + audio(AUDIO) + fps(FLOAT)
 images → SAM3 Detect → masks(MASK) + bboxes(BOUNDING_BOX)
-images + masks + bboxes + asset PNG'leri → Yonder HUD Renderer → images(IMAGE)
-Yonder images + fps + audio → CreateVideo → VIDEO → SaveVideo
+images + masks + bboxes + asset PNG'leri → YEA HUD Renderer → images(IMAGE)
+YEA images + fps + audio → CreateVideo → VIDEO → SaveVideo
 ```
 > Brief diyagramındaki tek "Video Segment (SAM3)" kutusu audio/fps **vermez**;
 > audio+fps `GetVideoComponents`'ten gelir. SAM3 yalnızca IMAGE alır, MASK+BBOX verir.
@@ -219,7 +219,7 @@ Yonder images + fps + audio → CreateVideo → VIDEO → SaveVideo
 ## 7. VIDEO tipi (2. aşama wrapper için)
 
 io_type=`"VIDEO"`, `Type=VideoInput` (düz dict **DEĞİL** — soyut wrapper sınıf,
-`comfy_api/latest/_input/video_types.py`). Stage-2 `Yonder HUD Video Renderer`:
+`comfy_api/latest/_input/video_types.py`). Stage-2 `YEA HUD Video Renderer`:
 `video.get_components()` → images/audio/frame_rate al → images'i işle →
 `VideoFromComponents(VideoComponents(images=..., audio=..., frame_rate=...))` ile
 geri sar. MVP'de VIDEO **uydurulmaz**; IMAGE batch + GetVideoComponents/CreateVideo yolu kullanılır.
@@ -234,7 +234,7 @@ Karar:
   `ComfyExtension` + `comfy_entrypoint`) — SAM3'ün kendisi V3, target 0.24.0 V3 destekli.
 - **Fallback: V1** — `__init__.py` içinde `comfy_api.latest` import edilemezse
   (eski ComfyUI) `NODE_CLASS_MAPPINGS` (INPUT_TYPES shim) üret. Loader önceliği
-  nedeniyle V1 mapping yalnızca V3 yokken tanımlanır. **İş mantığı `yonder_hud/`
+  nedeniyle V1 mapping yalnızca V3 yokken tanımlanır. **İş mantığı `yea_hud/`
   içinde schema-agnostik** kalır; iki ince adapter, kod duplikasyonu yok (brief §20).
 
 Doğrulanan V3 input API'leri (SAM3 + _io.py):
@@ -250,15 +250,15 @@ Doğrulanan V3 input API'leri (SAM3 + _io.py):
 
 Brief §5 yapısı korunur; kayıt katmanı V3/V1 ayrımıyla:
 ```
-ComfyUI-YonderHUD/
+ComfyUI-YEAHUD/
 ├── __init__.py            # V3 comfy_entrypoint; comfy_api yoksa V1 NODE_CLASS_MAPPINGS fallback
 ├── pyproject.toml, README.md, LICENSE, requirements.txt   # Pillow, numpy (torch ComfyUI'dan)
 ├── nodes/                 # İNCE schema katmanı (V3 + v1_compat)
 │   ├── hud_renderer.py inspect_bbox.py mask_to_bbox.py asset_pack.py video_wrapper.py v1_compat.py
-├── yonder_hud/            # schema-AGNOSTIK iş mantığı (test edilebilir, torch/Comfy bağımsız mümkün olduğunca)
+├── yea_hud/            # schema-AGNOSTIK iş mantığı (test edilebilir, torch/Comfy bağımsız mümkün olduğunca)
 │   ├── types.py geometry.py alpha.py palette.py text_render.py procedural_hud.py
 │   ├── bbox_adapter.py mask_adapter.py tracker.py compositor.py captions.py assets.py utils.py
-├── web/js/yonder_hud.js   # opsiyonel UX (backend bağımsız çalışır)
+├── web/js/yea_hud.js   # opsiyonel UX (backend bağımsız çalışır)
 ├── examples/              # sam3_hud_image_batch_workflow.json, sam3_hud_video_workflow.json, README.md
 ├── tests/                 # test_bbox_adapter/mask_adapter/tracking/alpha/compositor/captions + fixtures + test_integration_sam3
 └── docs/                  # runtime_findings.md(✓) architecture.md node_reference.md troubleshooting.md

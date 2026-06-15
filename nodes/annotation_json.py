@@ -1,6 +1,6 @@
-"""Yonder Annotation JSON — paste / edit / validate annotation JSON manually.
+"""YEA Annotation JSON — paste / edit / validate annotation JSON manually.
 
-Turns a hand-written or pasted YONDER_ANNOTATIONS JSON string into a validated
+Turns a hand-written or pasted YEA_ANNOTATIONS JSON string into a validated
 ``AnnotationSet`` object (+ normalized JSON + a validation report). No network,
 no model — pure parse/validate/normalize.
 """
@@ -9,12 +9,12 @@ from __future__ import annotations
 
 import logging
 
-logger = logging.getLogger("YonderHUD.annotation_json")
+logger = logging.getLogger("YEAHUD.annotation_json")
 
-DISPLAY_NAME = "Yonder Annotation JSON"
-NODE_ID = "YonderAnnotationJSON"
-CATEGORY = "Yonder/HUD/Annotation"
-ANNOTATIONS_TYPE = "YONDER_ANNOTATIONS"
+DISPLAY_NAME = "YEA Annotation JSON"
+NODE_ID = "YEAAnnotationJSON"
+CATEGORY = "YEA/HUD/Annotation"
+ANNOTATIONS_TYPE = "YEA_ANNOTATIONS"
 
 _EXAMPLE = (
     '{\n'
@@ -32,7 +32,7 @@ _EXAMPLE = (
 def run_annotation_json(annotations_json: str, width: int = 0, height: int = 0,
                         frame_count: int = 0, strict: bool = False):
     """Return (AnnotationSet, normalized_json_str, validation_report_str)."""
-    from yonder_hud.annotations import parse_annotations_json
+    from yea_hud.annotations import parse_annotations_json
 
     aset, report = parse_annotations_json(annotations_json, W=width, H=height,
                                           frame_count=frame_count, strict=strict)
@@ -54,9 +54,9 @@ def run_annotation_json(annotations_json: str, width: int = 0, height: int = 0,
 try:
     from comfy_api.latest import io
 
-    YonderAnnotations = io.Custom(ANNOTATIONS_TYPE)
+    YEAAnnotations = io.Custom(ANNOTATIONS_TYPE)
 
-    class YonderAnnotationJSON(io.ComfyNode):
+    class YEAAnnotationJSON(io.ComfyNode):
         @classmethod
         def define_schema(cls):
             return io.Schema(
@@ -64,19 +64,19 @@ try:
                 display_name=DISPLAY_NAME,
                 category=CATEGORY,
                 description=(
-                    "Paste / edit / validate YONDER_ANNOTATIONS JSON. Outputs a validated "
+                    "Paste / edit / validate YEA_ANNOTATIONS JSON. Outputs a validated "
                     "annotation object, normalized JSON, and a validation report. The renderer "
                     "uses these stable labels; it never invents descriptions itself."
                 ),
                 search_aliases=["annotation", "label", "json", "caption"],
                 inputs=[
                     io.String.Input("annotations_json", multiline=True, default=_EXAMPLE,
-                                    tooltip="YONDER_ANNOTATIONS JSON (tracks/children/frame_annotations)."),
+                                    tooltip="YEA_ANNOTATIONS JSON (tracks/children/frame_annotations)."),
                     io.Boolean.Input("strict", default=False, optional=True,
                                      tooltip="If true, invalid JSON raises instead of falling back to empty."),
                 ],
                 outputs=[
-                    YonderAnnotations.Output("annotations", display_name="annotations"),
+                    YEAAnnotations.Output("annotations", display_name="annotations"),
                     io.String.Output("normalized_json", display_name="normalized_json"),
                     io.String.Output("validation_report", display_name="validation_report"),
                 ],
@@ -87,6 +87,6 @@ try:
             aset, norm, report = run_annotation_json(annotations_json, strict=strict)
             return io.NodeOutput(aset, norm, report)
 
-    NODE = YonderAnnotationJSON
+    NODE = YEAAnnotationJSON
 except ImportError:  # pragma: no cover
     NODE = None

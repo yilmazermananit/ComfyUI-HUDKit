@@ -1,4 +1,4 @@
-"""Tests for ``yonder_hud.mask_adapter`` (brief §25, mask cases).
+"""Tests for ``yea_hud.mask_adapter`` (brief §25, mask cases).
 
 Covers the MASK shapes verified in ``docs/runtime_findings.md`` §4
 (``[B,H,W]``, ``[H,W]``, ``[B,1,H,W]``, flattened ``[N,H,W]``), the numpy/torch
@@ -32,8 +32,8 @@ if _REPO_ROOT not in sys.path:
 
 import torch  # noqa: E402  (allowed dep; imported after sys.path fix)
 
-from yonder_hud import mask_adapter  # noqa: E402
-from yonder_hud.types import Detection  # noqa: E402
+from yea_hud import mask_adapter  # noqa: E402
+from yea_hud.types import Detection  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-"""Yonder Track Crop Extractor — representative crops per stable SAM3 track.
+"""YEA Track Crop Extractor — representative crops per stable SAM3 track.
 
 So an external VLM describes each track ONCE (from a few good crops) instead of
 captioning every frame. Scores frames per track by visible area, centeredness and
@@ -12,11 +12,11 @@ from __future__ import annotations
 import json
 import logging
 
-logger = logging.getLogger("YonderHUD.crop_extractor")
+logger = logging.getLogger("YEAHUD.crop_extractor")
 
-DISPLAY_NAME = "Yonder Track Crop Extractor"
-NODE_ID = "YonderTrackCropExtractor"
-CATEGORY = "Yonder/HUD/Annotation"
+DISPLAY_NAME = "YEA Track Crop Extractor"
+NODE_ID = "YEATrackCropExtractor"
+CATEGORY = "YEA/HUD/Annotation"
 
 SELECTION_MODES = ("best", "largest", "sharpest", "most_centered", "multi_sample")
 _CROP_SIZE = 384
@@ -73,8 +73,8 @@ def run_track_crop_extractor(frames, track_data, samples_per_track=3, crop_paddi
                              minimum_track_area=0.0, selection_mode="best"):
     """Return (crops_image, crop_manifest_json, contact_sheet_image, track_indices_json)."""
     import torch
-    from yonder_hud import track_adapter
-    from yonder_hud.geometry import clamp_box
+    from yea_hud import track_adapter
+    from yea_hud.geometry import clamp_box
 
     frames = frames.detach().to("cpu", dtype=torch.float32)
     B, H, W = int(frames.shape[0]), int(frames.shape[1]), int(frames.shape[2])
@@ -149,7 +149,7 @@ try:
 
     SAM3TrackData = io.Custom("SAM3_TRACK_DATA")
 
-    class YonderTrackCropExtractor(io.ComfyNode):
+    class YEATrackCropExtractor(io.ComfyNode):
         @classmethod
         def define_schema(cls):
             return io.Schema(
@@ -186,6 +186,6 @@ try:
                 frames, track_data, samples_per_track, crop_padding, minimum_track_area, selection_mode)
             return io.NodeOutput(crops, manifest, sheet, indices)
 
-    NODE = YonderTrackCropExtractor
+    NODE = YEATrackCropExtractor
 except ImportError:  # pragma: no cover
     NODE = None

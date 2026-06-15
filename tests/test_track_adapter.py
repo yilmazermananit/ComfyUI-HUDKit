@@ -1,4 +1,4 @@
-"""Unit tests for yonder_hud.track_adapter (PRIMARY tracking path).
+"""Unit tests for yea_hud.track_adapter (PRIMARY tracking path).
 
 Runnable BOTH ways:
 
@@ -27,8 +27,8 @@ if _ROOT not in sys.path:
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
 
-from yonder_hud import track_adapter as TA  # noqa: E402
-from yonder_hud.types import Detection  # noqa: E402
+from yea_hud import track_adapter as TA  # noqa: E402
+from yea_hud.types import Detection  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

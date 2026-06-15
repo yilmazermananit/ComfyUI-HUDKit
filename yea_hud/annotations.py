@@ -1,4 +1,4 @@
-"""YONDER_ANNOTATIONS — model-independent semantic annotation layer.
+"""YEA_ANNOTATIONS — model-independent semantic annotation layer.
 
 The tracking layer (SAM3) gives stable identity + masks but NO descriptive prose.
 This module defines a versioned, schema-validated annotation structure that can
@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 
 SCHEMA_VERSION = 1
-ANNOTATIONS_TYPE = "YONDER_ANNOTATIONS"
+ANNOTATIONS_TYPE = "YEA_ANNOTATIONS"
 
 # Label "length" tiers, longest -> shortest, used for adaptive fallback.
 LABEL_TIERS = ("detailed_label", "medium_label", "short_label")

@@ -1,4 +1,4 @@
-# Comfy Cloud Compatibility Report — ComfyUI-YonderHUD
+# Comfy Cloud Compatibility Report — ComfyUI-YEAHUD
 
 > Goal: document, from **official sources**, the real target environment and the
 > real path (and limits) to running this node on official Comfy Cloud. Every
@@ -32,7 +32,7 @@ We do **not** assume a specific Cloud version number — Cloud's exact build is
 **Risk + mitigation.** The community pack may emit *different* socket types than the
 core nodes this pack was verified against. We do **not** assume compatibility from
 socket color or name (project rule). Mitigation = the shipped inspector nodes
-(`Yonder Inspect SAM3 Track Data`, `Yonder Inspect Bounding Boxes`): the user runs
+(`YEA Inspect SAM3 Track Data`, `YEA Inspect Bounding Boxes`): the user runs
 them on whatever SAM3 their Cloud has and reads the **actual** runtime structure.
 The adapters are defensive (multiple shapes), and the renderer accepts whichever of
 `track_data` / `bboxes` / `masks` is actually present.
@@ -72,10 +72,10 @@ The Registry runs an **AI + static-analysis security scanner**; flagged patterns
 `pip`/subprocess installs, code obfuscation; HTTP requests are flagged.
 (docs.comfy.org/registry/standards ; blog.comfy.org/p/comfyui-2025-jan-security-update)
 
-| Requirement | Status in ComfyUI-YonderHUD |
+| Requirement | Status in ComfyUI-YEAHUD |
 |-------------|------------------------------|
 | No model downloads | ✅ none — pure compositor over inputs |
-| No network / HTTP requests | ✅ none anywhere in `yonder_hud/` or `nodes/` |
+| No network / HTTP requests | ✅ none anywhere in `yea_hud/` or `nodes/` |
 | No runtime package install | ✅ deps (`numpy`,`Pillow`) declared in pyproject; torch from env |
 | No subprocess / arbitrary command exec | ✅ none |
 | No `eval` / `exec` / obfuscation | ✅ none — readable source |

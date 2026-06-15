@@ -234,7 +234,7 @@
     },
     {
       "id": 6,
-      "type": "YonderHUDRenderer",
+      "type": "YEAHUDRenderer",
       "pos": [
         1060,
         100
@@ -284,7 +284,7 @@
         },
         {
           "name": "annotations",
-          "type": "YONDER_ANNOTATIONS",
+          "type": "YEA_ANNOTATIONS",
           "link": 12
         },
         {
@@ -391,7 +391,7 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "YonderHUDRenderer"
+        "Node name for S&R": "YEAHUDRenderer"
       },
       "widgets_values": [
         77,
@@ -520,14 +520,14 @@
         "Node name for S&R": "SaveVideo"
       },
       "widgets_values": [
-        "video/YonderHUD",
+        "video/YEAHUD",
         "auto",
         "auto"
       ]
     },
     {
       "id": 9,
-      "type": "YonderAnnotationJSON",
+      "type": "YEAAnnotationJSON",
       "pos": [
         700,
         360
@@ -543,7 +543,7 @@
       "outputs": [
         {
           "name": "annotations",
-          "type": "YONDER_ANNOTATIONS",
+          "type": "YEA_ANNOTATIONS",
           "links": [
             12
           ],
@@ -563,7 +563,7 @@
         }
       ],
       "properties": {
-        "Node name for S&R": "YonderAnnotationJSON"
+        "Node name for S&R": "YEAAnnotationJSON"
       },
       "widgets_values": [
         "{\n  \"version\": 1,\n  \"tracks\": [\n    {\"track_id\": \"person:0\", \"category\": \"person\", \"short_label\": \"PERSON\",\n     \"detailed_label\": \"SHIRTLESS MAN WITH TATTOOS WEARING BEIGE SWEATPANTS\",\n     \"action_label\": \"KICKING SOCCER BALL\",\n     \"display_label\": \"SHIRTLESS MAN WITH TATTOOS KICKING SOCCER BALL\"}\n  ]\n}",
@@ -666,7 +666,7 @@
       0,
       6,
       7,
-      "YONDER_ANNOTATIONS"
+      "YEA_ANNOTATIONS"
     ]
   ],
   "groups": [],

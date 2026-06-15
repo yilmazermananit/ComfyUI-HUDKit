@@ -1,4 +1,4 @@
-"""Yonder Inspect Bounding Boxes — debug node.
+"""YEA Inspect Bounding Boxes — debug node.
 
 Logs and returns a safe structural summary of a native BOUNDING_BOX value and
 passes the bboxes through unchanged. Use when a SAM3 / detection node's bbox
@@ -11,11 +11,11 @@ from __future__ import annotations
 import json
 import logging
 
-logger = logging.getLogger("YonderHUD.inspect_bbox")
+logger = logging.getLogger("YEAHUD.inspect_bbox")
 
-DISPLAY_NAME = "Yonder Inspect Bounding Boxes"
-NODE_ID = "YonderInspectBoundingBoxes"
-CATEGORY = "Yonder/HUD"
+DISPLAY_NAME = "YEA Inspect Bounding Boxes"
+NODE_ID = "YEAInspectBoundingBoxes"
+CATEGORY = "YEA/HUD"
 
 
 def run_inspect_bbox(bboxes=None, masks=None, max_frames: int = 3, max_dets: int = 10) -> str:
@@ -23,7 +23,7 @@ def run_inspect_bbox(bboxes=None, masks=None, max_frames: int = 3, max_dets: int
 
     Pure / schema-agnostic so both the V3 node and the V1 shim can call it.
     """
-    from yonder_hud.bbox_adapter import summarize_bboxes
+    from yea_hud.bbox_adapter import summarize_bboxes
 
     summary = summarize_bboxes(bboxes, max_frames=max_frames, max_dets=max_dets)
 
@@ -41,7 +41,7 @@ def run_inspect_bbox(bboxes=None, masks=None, max_frames: int = 3, max_dets: int
             summary["masks"] = {"error": repr(exc)}
 
     text = json.dumps(summary, indent=2, ensure_ascii=False, default=str)
-    logger.info("Yonder Inspect Bounding Boxes:\n%s", text)
+    logger.info("YEA Inspect Bounding Boxes:\n%s", text)
     return text
 
 
@@ -49,7 +49,7 @@ def run_inspect_bbox(bboxes=None, masks=None, max_frames: int = 3, max_dets: int
 try:
     from comfy_api.latest import io, ui
 
-    class YonderInspectBoundingBoxes(io.ComfyNode):
+    class YEAInspectBoundingBoxes(io.ComfyNode):
         @classmethod
         def define_schema(cls):
             return io.Schema(
@@ -79,6 +79,6 @@ try:
             text = run_inspect_bbox(bboxes, masks)
             return io.NodeOutput(text, bboxes, ui=ui.PreviewText(text))
 
-    NODE = YonderInspectBoundingBoxes
+    NODE = YEAInspectBoundingBoxes
 except ImportError:  # pragma: no cover - V1 environments
     NODE = None

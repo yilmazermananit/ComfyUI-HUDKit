@@ -8,7 +8,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from yonder_hud.label_placement import LabelPlacer, PlacementRequest, candidate_rect, POSITIONS
+from yea_hud.label_placement import LabelPlacer, PlacementRequest, candidate_rect, POSITIONS
 
 
 def test_placed_rects_in_bounds():

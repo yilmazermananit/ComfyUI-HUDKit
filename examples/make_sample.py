@@ -1,9 +1,9 @@
 """Render a synthetic dense-HUD sample video (no SAM3 weights needed).
 
 Builds a small synthetic clip with moving "subjects", a native-format
-SAM3_TRACK_DATA (bit-packed masks), and a YONDER_ANNOTATIONS set with detailed
+SAM3_TRACK_DATA (bit-packed masks), and a YEA_ANNOTATIONS set with detailed
 labels + child regions (face / footwear) + a frame annotation (ball), then runs the
-real Yonder HUD Renderer and encodes the result to MP4 with PyAV. Also saves a
+real YEA HUD Renderer and encodes the result to MP4 with PyAV. Also saves a
 before/after still for the README.
 
 Run:

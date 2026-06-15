@@ -1,7 +1,7 @@
 """alpha.py — Load Image alpha recovery + asset preparation (brief §8).
 
 Schema-agnostic. Depends only on the standard library, :mod:`numpy`, :mod:`PIL`
-(Pillow), :mod:`torch`, and :mod:`yonder_hud.types`. It performs **no** ComfyUI
+(Pillow), :mod:`torch`, and :mod:`yea_hud.types`. It performs **no** ComfyUI
 imports, no network, no subprocess, no file IO — pure deterministic compute.
 
 Image / mask conventions (see ``docs/INTERFACES.md``)

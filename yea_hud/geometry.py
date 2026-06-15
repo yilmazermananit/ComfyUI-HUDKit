@@ -1,6 +1,6 @@
 """geometry.py — box math, padding, smoothing, placement.
 
-Schema-agnostic core geometry for ComfyUI-YonderHUD. Pure, deterministic compute
+Schema-agnostic core geometry for ComfyUI-YEAHUD. Pure, deterministic compute
 only: no ComfyUI imports, no network, no subprocess, no file I/O.
 
 Coordinate standard EVERYWHERE in this module: absolute-pixel **xyxy**

@@ -1,4 +1,4 @@
-"""Pytest bootstrap: ensure the package root is importable as ``yonder_hud``
+"""Pytest bootstrap: ensure the package root is importable as ``yea_hud``
 regardless of the current working directory when tests are run."""
 import os
 import sys

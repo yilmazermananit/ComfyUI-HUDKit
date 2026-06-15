@@ -6,7 +6,7 @@ visual language onto a **straight-alpha** ``RGBA`` canvas. Every primitive draws
 the canvas bounds** so a box that runs off-frame never raises and never paints
 outside the layer.
 
-Coordinate standard (matches the rest of ``yonder_hud``): absolute-pixel **xyxy**
+Coordinate standard (matches the rest of ``yea_hud``): absolute-pixel **xyxy**
 ``(x1, y1, x2, y2)`` with a top-left origin. Colors are passed as
 ``color_rgba = (r, g, b, a)`` with each channel a float in ``0..1``; the alpha is
 *baked into the layer* (PIL ``ImageDraw`` over an RGBA image replaces destination
@@ -19,7 +19,7 @@ permitted), ``from .types import ...`` and the sibling ``geometry`` module.
 NO ComfyUI imports, NO network / subprocess / eval / file writes. Pure
 deterministic compute (the only randomness is the caller-supplied
 ``random.Random`` used for optional glitch / registration variation, which is
-itself seeded deterministically upstream via ``yonder_hud.utils.rng_for``).
+itself seeded deterministically upstream via ``yea_hud.utils.rng_for``).
 
 Public API (binding contract — ``docs/INTERFACES.md`` "## procedural_hud.py")::
 

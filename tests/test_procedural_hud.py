@@ -1,4 +1,4 @@
-"""Tests for ``yonder_hud.procedural_hud`` (brief §9 primitives, §25 cases).
+"""Tests for ``yea_hud.procedural_hud`` (brief §9 primitives, §25 cases).
 
 Runnable two ways:
 
@@ -40,7 +40,7 @@ _REPO_ROOT = os.path.dirname(_THIS_DIR)
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from yonder_hud import procedural_hud as P  # noqa: E402
+from yea_hud import procedural_hud as P  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

@@ -3,13 +3,13 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "comfyui-yonderhud"
+name = "comfyui-yeahud"
 version = "0.1.0"
 description = "Designed HUD video overlays from native SAM3 tracking. Consumes native SAM3_TRACK_DATA / BOUNDING_BOX / MASK and the user's transparent PNG frame & target assets to render stable-identity, captioned, color-coded HUD graphics. No third-party bbox bridge nodes."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
-authors = [{ name = "DifferentGuys Studio (Yonder)", email = "erman@differentguys.studio" }]
+authors = [{ name = "DifferentGuys Studio (YEA)", email = "erman@differentguys.studio" }]
 keywords = ["comfyui", "sam3", "tracking", "hud", "overlay", "video", "compositing"]
 
 # Runtime deps kept minimal for Comfy Cloud / Registry compatibility.
@@ -24,15 +24,15 @@ classifiers = [
 
 [project.urls]
 # REQUIRED by the Comfy Registry. Replace with the real repo before publishing.
-Repository = "https://github.com/yonder/ComfyUI-YonderHUD"
-"Bug Tracker" = "https://github.com/yonder/ComfyUI-YonderHUD/issues"
+Repository = "https://github.com/yilmazermananit/ComfyUI-YEAHUD"
+"Bug Tracker" = "https://github.com/yilmazermananit/ComfyUI-YEAHUD/issues"
 
 # --- Comfy Registry metadata (docs.comfy.org/registry/specifications) -------
 [tool.comfy]
 # PublisherId is the value after '@' on your registry.comfy.org profile.
 # This is a PLACEHOLDER — set it to your real PublisherId before `comfy node publish`.
-PublisherId = "yonder"
-DisplayName = "ComfyUI-YonderHUD"
+PublisherId = "yilmazermananit"
+DisplayName = "ComfyUI-YEAHUD"
 # SAM3 native nodes + BOUNDING_BOX/SAM3_TRACK_DATA types landed in ComfyUI v0.20.1.
 requires-comfyui = ">=0.20.1"
 # Icon (<=400x400 square) / Banner (21:9) may be added as hosted URLs before publish.
@@ -40,5 +40,5 @@ requires-comfyui = ">=0.20.1"
 [tool.setuptools]
 # Only ship the runtime package + web assets; tests/docs/examples are dev-only
 # (see .comfyignore for the Registry packaging excludes).
-packages = ["yonder_hud", "nodes"]
+packages = ["yea_hud", "nodes"]
 include-package-data = true

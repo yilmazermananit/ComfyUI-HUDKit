@@ -1,4 +1,4 @@
-"""Unit tests for ``yonder_hud.palette`` (color resolution, brief §14).
+"""Unit tests for ``yea_hud.palette`` (color resolution, brief §14).
 
 Runnable two ways:
 
@@ -39,9 +39,9 @@ if _ROOT not in sys.path:
 
 import json  # noqa: E402
 
-from yonder_hud.types import DEFAULT_PALETTE  # noqa: E402
-from yonder_hud.utils import stable_hash  # noqa: E402
-from yonder_hud.palette import (  # noqa: E402
+from yea_hud.types import DEFAULT_PALETTE  # noqa: E402
+from yea_hud.utils import stable_hash  # noqa: E402
+from yea_hud.palette import (  # noqa: E402
     color_for_track,
     contrast_text_color,
     luminance,
@@ -432,7 +432,7 @@ def test_color_for_track_independent_of_pythonhashseed():
     assert color_for_track(pal, 77, "obj_a")[0] == expected[("str", "obj_a")]
 
     snippet = (
-        "from yonder_hud.palette import resolve_palette, color_for_track;"
+        "from yea_hud.palette import resolve_palette, color_for_track;"
         "pal=resolve_palette('[\"#FF0000\",\"#00FF00\",\"#0000FF\",\"#FFFFFF\",\"#000000\"]');"
         "print(color_for_track(pal,77,0)[0]);"
         "print(color_for_track(pal,77,13)[0]);"

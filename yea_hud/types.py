@@ -1,6 +1,6 @@
-"""Schema-agnostic core types for ComfyUI-YonderHUD.
+"""Schema-agnostic core types for ComfyUI-YEAHUD.
 
-This module is the *contract* every other module in ``yonder_hud`` implements
+This module is the *contract* every other module in ``yea_hud`` implements
 against. It depends only on the Python standard library (no torch, no PIL, no
 ComfyUI) so it can be imported in any context and unit-tested in isolation.
 
@@ -82,7 +82,7 @@ PRIMITIVE_STYLES: tuple[str, ...] = (
 class Detection:
     """A single detection in a single frame, in absolute-pixel xyxy.
 
-    Produced by :mod:`yonder_hud.bbox_adapter` and :mod:`yonder_hud.mask_adapter`.
+    Produced by :mod:`yea_hud.bbox_adapter` and :mod:`yea_hud.mask_adapter`.
     All consumers (tracker, compositor) read xyxy. ``x2 >= x1`` and ``y2 >= y1``
     are guaranteed by the adapters (they swap/clamp/drop degenerate boxes).
     """

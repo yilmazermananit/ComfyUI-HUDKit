@@ -1,10 +1,10 @@
 """mask_adapter.py — native MASK handling + connected components.
 
-Schema-agnostic core for ComfyUI-YonderHUD (brief §6.2 node, §8 align). Pure,
+Schema-agnostic core for ComfyUI-YEAHUD (brief §6.2 node, §8 align). Pure,
 deterministic compute only: **no** ComfyUI imports, no network, no subprocess,
 no ``eval``/``exec``, no file IO. Allowed dependencies are the standard library,
 :mod:`numpy`, :mod:`PIL` (unused here but allowed), :mod:`torch`, the shared
-:mod:`yonder_hud.types`, and the sibling :mod:`yonder_hud.geometry`.
+:mod:`yea_hud.types`, and the sibling :mod:`yea_hud.geometry`.
 
 What this module does
 ---------------------
@@ -29,11 +29,11 @@ Three public entry points:
 * :func:`normalize_mask_batch` — coerce any MASK shape into a list (length ``B``)
   of ``float32 [H, W]`` arrays in ``0..1``.
 * :func:`mask_to_detections` — connected-component analysis of one ``[H, W]``
-  mask into :class:`~yonder_hud.types.Detection` boxes (xyxy), with a
+  mask into :class:`~yea_hud.types.Detection` boxes (xyxy), with a
   ``min_area`` drop filter and a ``merge_distance`` near-box merge. Implemented
   in pure numpy (a flood-fill labeller); an optional OpenCV fast path is used
   when ``cv2`` is importable, producing identical boxes.
-* :func:`masks_to_native_bboxes` — for the *Yonder Mask to Native BBoxes* node:
+* :func:`masks_to_native_bboxes` — for the *YEA Mask to Native BBoxes* node:
   returns the **native** ``BOUNDING_BOX`` runtime value
   (``list[list[{"x","y","width","height","score"}]]`` of absolute-pixel xywh),
   with NO custom type, so the output drops straight into any consumer that
@@ -463,7 +463,7 @@ def mask_to_detections(
     The mask is binarised at ``mask > threshold``, split into 4-connected
     components, optionally merged when components are within ``merge_distance``
     pixels, filtered by ``min_area`` (true component pixel count), and emitted as
-    :class:`~yonder_hud.types.Detection` boxes in absolute-pixel **xyxy**.
+    :class:`~yea_hud.types.Detection` boxes in absolute-pixel **xyxy**.
 
     Parameters
     ----------
@@ -571,7 +571,7 @@ def masks_to_native_bboxes(
 ) -> List[List[dict]]:
     """Convert a MASK batch to the native ``BOUNDING_BOX`` runtime value.
 
-    This backs the *Yonder Mask to Native BBoxes* node. The return value matches
+    This backs the *YEA Mask to Native BBoxes* node. The return value matches
     exactly what SAM3 / Mediapipe emit (``docs/runtime_findings.md`` §3) so it
     plugs into any consumer of ``BOUNDING_BOX`` with **no custom type**::
 

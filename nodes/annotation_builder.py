@@ -1,4 +1,4 @@
-"""Yonder Annotation Builder — merge tracking + labels into one YONDER_ANNOTATIONS.
+"""YEA Annotation Builder — merge tracking + labels into one YEA_ANNOTATIONS.
 
 Combines: a base annotation set derived from SAM3 track_data (generic group labels +
 stable namespaced ids), VLM responses (per-crop list reduced to one consensus label
@@ -11,19 +11,19 @@ from __future__ import annotations
 import json
 import logging
 
-logger = logging.getLogger("YonderHUD.annotation_builder")
+logger = logging.getLogger("YEAHUD.annotation_builder")
 
-DISPLAY_NAME = "Yonder Annotation Builder"
-NODE_ID = "YonderAnnotationBuilder"
-CATEGORY = "Yonder/HUD/Annotation"
-ANNOTATIONS_TYPE = "YONDER_ANNOTATIONS"
+DISPLAY_NAME = "YEA Annotation Builder"
+NODE_ID = "YEAAnnotationBuilder"
+CATEGORY = "YEA/HUD/Annotation"
+ANNOTATIONS_TYPE = "YEA_ANNOTATIONS"
 
 
 def _consensus_from_vlm_list(captions_json, crop_manifest_json, report):
     """If captions_json is a LIST of per-crop VLM responses, reduce to one consensus
     label per track (resolving crop_index -> track_id via the manifest). Returns a
     by-track dict JSON string suitable for merging, or the original string unchanged."""
-    from yonder_hud.annotations import caption_consensus
+    from yea_hud.annotations import caption_consensus
 
     if not captions_json or not captions_json.strip().startswith("["):
         return captions_json
@@ -57,8 +57,8 @@ def run_annotation_builder(track_data=None, crop_manifest_json="", captions_json
                            manual_annotations_json="", secondary_detections_json="",
                            default_category="person", label_template="", primary_group_label="PERSON"):
     """Return (AnnotationSet, annotations_json_str, validation_report_str)."""
-    from yonder_hud import track_adapter
-    from yonder_hud.annotations import annotation_set_from_detections, merge_annotation_sources
+    from yea_hud import track_adapter
+    from yea_hud.annotations import annotation_set_from_detections, merge_annotation_sources
 
     report = []
     W = H = fc = 0
@@ -93,10 +93,10 @@ def run_annotation_builder(track_data=None, crop_manifest_json="", captions_json
 try:
     from comfy_api.latest import io
 
-    YonderAnnotations = io.Custom(ANNOTATIONS_TYPE)
+    YEAAnnotations = io.Custom(ANNOTATIONS_TYPE)
     SAM3TrackData = io.Custom("SAM3_TRACK_DATA")
 
-    class YonderAnnotationBuilder(io.ComfyNode):
+    class YEAAnnotationBuilder(io.ComfyNode):
         @classmethod
         def define_schema(cls):
             return io.Schema(
@@ -105,7 +105,7 @@ try:
                 category=CATEGORY,
                 description=(
                     "Merge SAM3 track ids, VLM responses, manual labels and secondary detections "
-                    "into one stable YONDER_ANNOTATIONS object. VLM crop responses are reduced to "
+                    "into one stable YEA_ANNOTATIONS object. VLM crop responses are reduced to "
                     "one consensus label per track. No network / no model here."
                 ),
                 search_aliases=["annotation", "merge", "builder", "vlm", "label"],
@@ -117,7 +117,7 @@ try:
                     io.String.Input("captions_json", default="", multiline=True, optional=True,
                                     tooltip='VLM output: a list of per-crop responses, OR a by-track dict {"person:0":"..."}.'),
                     io.String.Input("manual_annotations_json", default="", multiline=True, optional=True,
-                                    tooltip="Authoritative manual YONDER_ANNOTATIONS JSON (wins on conflicts)."),
+                                    tooltip="Authoritative manual YEA_ANNOTATIONS JSON (wins on conflicts)."),
                     io.String.Input("secondary_detections_json", default="", multiline=True, optional=True,
                                     tooltip="Secondary detector boxes (frame_annotations or universal list)."),
                     io.String.Input("default_category", default="person", optional=True),
@@ -126,7 +126,7 @@ try:
                                     tooltip="Optional template for tracks lacking a display_label, e.g. '{id}. {short_label}'."),
                 ],
                 outputs=[
-                    YonderAnnotations.Output("annotations", display_name="annotations"),
+                    YEAAnnotations.Output("annotations", display_name="annotations"),
                     io.String.Output("annotations_json", display_name="annotations_json"),
                     io.String.Output("validation_report", display_name="validation_report"),
                 ],
@@ -142,6 +142,6 @@ try:
                 secondary_detections_json, default_category, label_template, primary_group_label)
             return io.NodeOutput(aset, aj, report)
 
-    NODE = YonderAnnotationBuilder
+    NODE = YEAAnnotationBuilder
 except ImportError:  # pragma: no cover
     NODE = None
