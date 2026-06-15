@@ -80,6 +80,7 @@ class YEAHUDRendererV1:
             "show_track_id": ("BOOLEAN", {"default": False}),
             "annotation_priority_threshold": ("INT", {"default": 0, "min": 0, "max": 200}),
             "color_mode": (COLOR_MODES, {"default": "track_random"}),
+            "font": ("STRING", {"default": ""}),
             "caption_source": (list(CAPTION_SOURCES), {"default": "fixed"}),
             "fixed_label": ("STRING", {"default": "PERSON"}),
             "captions_json": ("STRING", {"default": "", "multiline": True}),
@@ -111,7 +112,7 @@ class YEAHUDRendererV1:
             caption_mode="auto", label_length_mode="adaptive", label_collision_mode="reposition_and_shorten",
             label_density=1.0, max_labels_per_frame=0, show_child_annotations=True, show_action_label=True,
             show_context_label=False, show_confidence=False, show_track_id=False,
-            annotation_priority_threshold=0, color_mode="track_random", caption_source="fixed",
+            annotation_priority_threshold=0, color_mode="track_random", font="", caption_source="fixed",
             fixed_label="PERSON", captions_json="", caption_template="{track:02d}. {label}", palette_json="",
             small_object_mode="target_only", label_text_color_mode="auto", asset_fit_mode="stretch",
             trim_transparent_assets=True, padding_mode="pixels", flicker_probability=0.04,
@@ -145,7 +146,7 @@ class YEAHUDRendererV1:
             show_confidence=show_confidence, show_track_id=show_track_id,
             show_child_annotations=show_child_annotations, show_action_label=show_action_label,
             show_context_label=show_context_label, annotation_priority_threshold=annotation_priority_threshold,
-            color_mode=color_mode, progress=pbar,
+            color_mode=color_mode, font=font, progress=pbar,
             interrupt=mm.throw_exception_if_processing_interrupted)
 
 

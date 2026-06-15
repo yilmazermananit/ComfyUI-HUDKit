@@ -183,7 +183,7 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
                      show_confidence=False, show_track_id=False, show_category=False,
                      show_child_annotations=True, show_action_label=True, show_context_label=False,
                      secondary_annotation_scale=0.6, annotation_priority_threshold=0,
-                     color_mode="track_random",
+                     color_mode="track_random", font="",
                      progress=None, interrupt=None):
     """Render HUD overlays. Returns (images, debug_preview, tracking_json_str)."""
     import torch  # noqa: F401
@@ -406,8 +406,18 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
         "line_width": int(line_width), "target_scale": target_scale, "label_scale": label_scale,
         "label_text_color_mode": label_text_color_mode, "detail_density": 0.5,
     }
+    # Resolve the label font: an absolute path, or a filename in yea_hud/fonts/.
+    font_path = None
+    if font:
+        import os as _os
+        from yea_hud import text_render as _tr
+        if _os.path.isabs(font) and _os.path.exists(font):
+            font_path = font
+        else:
+            _cand = _os.path.join(_os.path.dirname(_os.path.abspath(_tr.__file__)), "fonts", font)
+            font_path = _cand if _os.path.exists(_cand) else None
     images = render_frames(frames, plans, assets=assets, palette=palette, params=params,
-                           font_path=None, progress=None, interrupt=interrupt)
+                           font_path=font_path, progress=None, interrupt=interrupt)
 
     preview_idx = next((i for i, p in enumerate(plans) if p), 0)
     debug_preview = images[preview_idx:preview_idx + 1]
@@ -506,6 +516,8 @@ try:
                     io.Float.Input("secondary_annotation_scale", default=0.6, min=0.2, max=1.0, step=0.05, optional=True),
                     io.Int.Input("annotation_priority_threshold", default=0, min=0, max=200, optional=True),
                     io.Combo.Input("color_mode", options=COLOR_MODES, default="track_random", optional=True),
+                    io.String.Input("font", default="", optional=True,
+                                    tooltip="Label font: a filename in yea_hud/fonts/ or an absolute .ttf/.otf path. Empty = bundled/system default."),
                     *_asset_inputs(),
                     # --- captions (fallback when no annotations) / palette ---
                     io.Combo.Input("caption_source", options=list(CAPTION_SOURCES), default="fixed", optional=True),
@@ -545,7 +557,7 @@ try:
                     captions_json="", caption_template="{track:02d}. {label}", palette_json="",
                     small_object_mode="target_only", label_text_color_mode="auto", asset_fit_mode="stretch",
                     trim_transparent_assets=True, padding_mode="pixels", flicker_probability=0.04,
-                    position_jitter_px=0, min_box_area_ratio=0.0004, **asset_kw) -> io.NodeOutput:
+                    position_jitter_px=0, min_box_area_ratio=0.0004, font="", **asset_kw) -> io.NodeOutput:
             import comfy.utils
             import comfy.model_management as mm
             B = int(frames.shape[0])
@@ -578,7 +590,7 @@ try:
                 show_child_annotations=show_child_annotations, show_action_label=show_action_label,
                 show_context_label=show_context_label, secondary_annotation_scale=secondary_annotation_scale,
                 annotation_priority_threshold=annotation_priority_threshold, color_mode=color_mode,
-                default_category="person", progress=pbar,
+                font=font, default_category="person", progress=pbar,
                 interrupt=mm.throw_exception_if_processing_interrupted)
             return io.NodeOutput(images, debug_preview, tracking_json)
 
