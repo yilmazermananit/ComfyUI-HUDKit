@@ -28,10 +28,24 @@ dense_editorial`) · `label_density` FLOAT · `max_labels_per_frame` INT ·
 (`track_random/category_based/source_based/fixed_palette/annotation_override`).
 
 **Assets** (optional): `frame_1..6_image` + `frame_1..6_mask`, `target_1..2_image` +
-`target_1..2_mask` (Load Image IMAGE+MASK pairs). **Captions/style** (optional):
+`target_1..2_mask` (Load Image IMAGE+MASK pairs), or a single `asset_pack` from the
+**YEA HUD Asset Pack** node. White-on-transparent PNGs; recolored to the track color.
+Frame designs are typically a top label-bar + thin corner brackets; supply several at
+different proportions (a portrait one, a square one, a wide one) and the renderer does
+**aspect-aware selection** — per box it picks the design whose *content* aspect (w/h)
+is closest (log-symmetric) to the box, so a tall box gets the tall design and a wide box
+the wide one, with no stretch deformation. The choice is computed on the smoothed box so
+it is stable across frames. Solid/filled frame assets (alpha coverage > 0.30) are dropped
+by the Asset Pack by default so the box interior stays transparent.
+
+**Captions/style** (optional):
 `caption_source`, `fixed_label`, `captions_json`, `caption_template`, `palette_json`,
 `small_object_mode`, `label_text_color_mode`, `asset_fit_mode`, `trim_transparent_assets`,
-`padding_mode`, `flicker_probability`, `position_jitter_px`, `min_box_area_ratio`.
+`padding_mode`, `flicker_probability`, `position_jitter_px`, `min_box_area_ratio` ·
+`target_probability` FLOAT (chance a track shows a centre reticle; `0` = none — the frame
+design already brackets the box) · `fill_probability` FLOAT · `detail_density` FLOAT
+(procedural machine-vision registration marks; default `0` since user designs carry their
+own marks — raise it for the asset-less procedural look).
 
 **Outputs:** `images` IMAGE · `debug_preview` IMAGE (first annotated frame) ·
 `tracking_json` STRING.

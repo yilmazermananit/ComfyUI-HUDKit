@@ -398,6 +398,66 @@ def test_numpy_pair_inputs_supported():
 
 
 # ---------------------------------------------------------------------------
+# Aspect-aware frame selection (pick the design that matches the box proportion)
+# ---------------------------------------------------------------------------
+
+def _white_rect_png(content_w: int, content_h: int, pad: int = 4):
+    """A solid white rect of (content_h x content_w) on a transparent canvas.
+
+    With ``trim=True`` the bank measures aspect = content_w / content_h, so this
+    lets a test pin an asset's *content* aspect exactly regardless of canvas pad.
+    """
+    H = content_h + 2 * pad
+    W = content_w + 2 * pad
+    rgb = np.zeros((H, W, 3), dtype=np.float32)
+    a = np.zeros((H, W), dtype=np.float32)
+    rgb[pad:pad + content_h, pad:pad + content_w, :] = 1.0
+    a[pad:pad + content_h, pad:pad + content_w] = 1.0
+    return torch.from_numpy(rgb).unsqueeze(0), _loadimage_mask(a)
+
+
+def test_frame_aspect_measures_trimmed_content():
+    # Three designs with KNOWN content aspect: portrait 0.33, square 1.0, wide 4.0.
+    bank = _bank(
+        [_white_rect_png(20, 60), _white_rect_png(40, 40), _white_rect_png(80, 20)],
+        trim=True,
+    )
+    assert abs(bank.frame_aspect(0) - (20.0 / 60.0)) < 0.06   # portrait
+    assert abs(bank.frame_aspect(1) - 1.0) < 0.06             # square
+    assert abs(bank.frame_aspect(2) - (80.0 / 20.0)) < 0.2    # wide
+    # Out-of-range -> None (never raises).
+    assert bank.frame_aspect(9) is None
+    assert bank.frame_aspect(-1) is None
+
+
+def test_frame_asset_for_aspect_picks_closest_design():
+    # portrait(0)=0.33, square(1)=1.0, wide(2)=4.0
+    bank = _bank(
+        [_white_rect_png(20, 60), _white_rect_png(40, 40), _white_rect_png(80, 20)],
+        trim=True,
+    )
+    assert bank.frame_asset_for_aspect(0.30) == 0   # tall box -> portrait design
+    assert bank.frame_asset_for_aspect(0.95) == 1   # square-ish box -> square design
+    assert bank.frame_asset_for_aspect(1.15) == 1   # near-square stays square
+    assert bank.frame_asset_for_aspect(3.6) == 2    # wide box -> wide design
+    # Log-symmetric: 2:1 and 1:2 are each "one octave" from square -> equidistant,
+    # so a 2.0 box is closer to the wide design than to square.
+    assert bank.frame_asset_for_aspect(2.2) == 2
+
+
+def test_frame_asset_for_aspect_single_and_bad_inputs_fall_back():
+    one = _bank([_white_rect_png(40, 40)], trim=True)
+    assert one.frame_asset_for_aspect(5.0) == 0          # only one design -> id 0
+    bank = _bank(
+        [_white_rect_png(20, 60), _white_rect_png(80, 20)], trim=True
+    )
+    # Non-finite / non-positive aspects fall back to the provided id, never raise.
+    assert bank.frame_asset_for_aspect(float("nan"), fallback_id=1) == 1
+    assert bank.frame_asset_for_aspect(0.0, fallback_id=0) == 0
+    assert bank.frame_asset_for_aspect(-3.0, fallback_id=1) == 1
+
+
+# ---------------------------------------------------------------------------
 # Script runner (mirrors the other test modules)
 # ---------------------------------------------------------------------------
 

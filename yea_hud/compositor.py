@@ -401,6 +401,20 @@ def _draw_item(
     # 'line_dropout' suppresses the box/frame for this one frame (a flicker).
     drew_asset = False
     frame_asset_id = int(getattr(style, "frame_asset_id", -1))
+    # Aspect-aware design pick: choose the frame design whose content aspect (w/h)
+    # best matches THIS box's proportion, so a tall box gets the tall design and a
+    # wide box the wide one — the art is never stretch-deformed off its aspect. Pick
+    # on the SMOOTHED box (item.box, pre-jitter) so the choice is stable across frames.
+    if (
+        frame_asset_id >= 0
+        and assets is not None
+        and hasattr(assets, "frame_asset_for_aspect")
+    ):
+        _ax1, _ay1, _ax2, _ay2 = geometry.normalize_box(*item.box)
+        _basp = max(1e-3, _ax2 - _ax1) / max(1e-3, _ay2 - _ay1)
+        _sel = assets.frame_asset_for_aspect(_basp, fallback_id=frame_asset_id)
+        if _sel is not None and int(_sel) >= 0:
+            frame_asset_id = int(_sel)
     wants_asset = (
         frame_asset_id >= 0
         and primitive not in ("target_only",)
@@ -492,17 +506,19 @@ def _draw_item(
                 drew_target_asset = True
 
         if not drew_target_asset and t_op > 0.0:
-            size = min(_crosshair_size(box, target_scale), int(H * 0.05))
-            gap = max(1, int(round(size * 0.35)))
+            # Small, QUIET centre reticle — no tick scatter, no dot, dimmed: the corner
+            # brackets are the hero, this is just a subtle centre mark (reference HUD).
+            size = min(_crosshair_size(box, target_scale), int(H * 0.024))
+            gap = max(1, int(round(size * 0.45)))
             procedural_hud.draw_crosshair(
                 draw,
                 (cx, cy),
                 size,
-                _color_rgba(color_rgb, t_op),
-                line_width,
+                _color_rgba(color_rgb, _clamp01(t_op * 0.6)),
+                max(1, line_width - 1),
                 gap,
-                dot=True,
-                ticks=True,
+                dot=False,
+                ticks=False,
             )
 
     # ----- 4. LABEL STRIP + TEXT -----------------------------------------

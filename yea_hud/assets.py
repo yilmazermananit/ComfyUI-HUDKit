@@ -67,6 +67,7 @@ deterministic function of the bucket rather than of the exact pixel-jittered box
 
 from __future__ import annotations
 
+import math
 from typing import List, Optional, Sequence, Tuple
 
 import numpy as np
@@ -446,6 +447,79 @@ class AssetBank:
         if op != 1.0:
             out[:, :, 3] *= op
         return out
+
+    # ------------------------------------------------------------------ #
+    # Aspect-aware selection (pick the design that matches the box proportion)
+    # ------------------------------------------------------------------ #
+
+    def frame_aspect(self, eligible_id: int) -> Optional[float]:
+        """Content aspect ratio (width / height) of an eligible frame asset.
+
+        Measured on the *trimmed* alpha content (when :attr:`trim`) so it reflects
+        exactly the art the compositor draws — a portrait bracket design reports
+        ``<1``, a landscape one ``>1``. Cached per eligible id. Returns ``None`` for
+        an out-of-range / image-less (mask-only) slot.
+        """
+        try:
+            idx = int(eligible_id)
+        except (TypeError, ValueError):
+            return None
+        if idx < 0 or idx >= len(self._frame_eligible):
+            return None
+        cache = getattr(self, "_frame_aspect_cache", None)
+        if cache is None:
+            cache = {}
+            self._frame_aspect_cache = cache
+        if idx in cache:
+            return cache[idx]
+        image, mask = self._frame_slots[self._frame_eligible[idx]]
+        aspect: Optional[float] = None
+        if image is not None:
+            rgb = alpha_mod.to_numpy_img(image)
+            if mask is not None:
+                a = alpha_mod.recover_alpha(rgb, mask, invert_auto=True)
+            else:
+                a = alpha_mod.luminance_alpha(rgb)
+            if self.trim:
+                _rgb, a, _bbox = alpha_mod.trim_transparent(rgb, a)
+            h, w = a.shape[:2]
+            if h > 0 and w > 0:
+                aspect = float(w) / float(h)
+        cache[idx] = aspect
+        return aspect
+
+    def frame_asset_for_aspect(
+        self, box_aspect: float, fallback_id: int = 0
+    ) -> int:
+        """Eligible frame id whose content aspect best matches ``box_aspect`` (w/h).
+
+        Chooses by minimum ``|log(asset_aspect) − log(box_aspect)|`` so the match is
+        ratio-symmetric (2:1 and 1:2 are equally "one octave" off square). This lets
+        the renderer drop the design that fits the box's proportion — a tall box gets
+        the tall bracket, a wide box the wide one — instead of stretch-deforming one
+        off-aspect art onto every box. Falls back to ``fallback_id`` when only one
+        asset exists or no aspect is measurable.
+        """
+        n = self.n_frame_assets
+        if n <= 1:
+            return 0 if n == 1 else int(fallback_id)
+        try:
+            ba = float(box_aspect)
+        except (TypeError, ValueError):
+            return int(fallback_id)
+        if not (ba > 0.0) or not math.isfinite(ba):
+            return int(fallback_id)
+        log_ba = math.log(ba)
+        best_id: Optional[int] = None
+        best_d = float("inf")
+        for i in range(n):
+            asp = self.frame_aspect(i)
+            if asp is None or asp <= 0.0:
+                continue
+            d = abs(math.log(asp) - log_ba)
+            if d < best_d:
+                best_d, best_id = d, i
+        return best_id if best_id is not None else int(fallback_id)
 
     # ------------------------------------------------------------------ #
     # Introspection / housekeeping

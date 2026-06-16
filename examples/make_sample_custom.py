@@ -30,8 +30,10 @@ import make_sample as ms  # scene builder (_build, B, H, W, FPS)
 TARGET = os.path.join(_HERE, "assets")
 if not os.path.isdir(TARGET):
     TARGET = os.path.expanduser("~/Desktop/TARGET")
-FRAME_FILES = [f"Untitled-1_Frame {i}.png" for i in range(1, 7)]
-TARGET_FILES = ["Untitled-1_TARGET POINT.png", "Untitled-1_TARGET POINT 2.png"]
+import glob as _glob
+_allp = sorted(_glob.glob(os.path.join(TARGET, "*.png")))
+FRAME_FILES = [os.path.basename(p) for p in _allp if "target" not in os.path.basename(p).lower()][:6]
+TARGET_FILES = [os.path.basename(p) for p in _allp if "target" in os.path.basename(p).lower()][:2]
 PALETTE = [(1.0, 0.16, 0.10), (0.13, 0.36, 1.0), (0.55, 1.0, 0.16), (1.0, 0.69, 0.87)]
 
 
@@ -89,8 +91,9 @@ def main():
         frames, track_data=track_data, annotations_json=json.dumps(annotations),
         seed=77, style_mode="assets_only", max_objects=24, display_probability=1.0,
         padding_x=10, padding_y=10, smoothing=0.55, track_iou_threshold=0.25, track_memory_frames=6,
-        frame_opacity=1.0, fill_opacity=0.0, label_opacity=0.92, line_width=2, target_scale=0.42,
-        caption_mode="detailed", label_length_mode="adaptive", show_child_annotations=True,
+        frame_opacity=1.0, fill_opacity=0.0, label_opacity=0.92, line_width=2, target_scale=0.30,
+        target_probability=0.0, detail_density=0.0,
+        caption_mode="detailed", label_length_mode="adaptive", show_child_annotations=False,
         show_action_label=True, color_mode="category_based", primary_group_label="PERSON",
         frame_images=fimg, frame_masks=fmsk, target_images=timg, target_masks=tmsk)
     print("tracking:", tj)

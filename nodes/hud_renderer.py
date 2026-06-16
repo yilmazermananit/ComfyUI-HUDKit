@@ -184,6 +184,7 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
                      show_child_annotations=True, show_action_label=True, show_context_label=False,
                      secondary_annotation_scale=0.6, annotation_priority_threshold=0,
                      color_mode="track_random", font="", asset_pack=None,
+                     target_probability=0.0, fill_probability=0.25, detail_density=0.0,
                      progress=None, interrupt=None):
     """Render HUD overlays. Returns (images, debug_preview, tracking_json_str)."""
     import torch  # noqa: F401
@@ -236,7 +237,8 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
     tracker = Tracker(seed=int(seed), iou_threshold=track_iou_threshold, max_centroid_ratio=0.35,
                       memory_frames=int(track_memory_frames), smoothing=smoothing, palette=palette,
                       n_frame_assets=assets.n_frame_assets, n_target_assets=assets.n_target_assets,
-                      style_mode=style_mode, display_probability=display_probability, W=W, H=H)
+                      style_mode=style_mode, display_probability=display_probability, W=W, H=H,
+                      target_probability=target_probability, fill_probability=fill_probability)
 
     captions = captions_mod.parse_captions_json(captions_json)
     placer = LabelPlacer(W, H, collision_mode=label_collision_mode)
@@ -410,7 +412,7 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
     params = {
         "frame_opacity": frame_opacity, "fill_opacity": fill_opacity, "label_opacity": label_opacity,
         "line_width": int(line_width), "target_scale": target_scale, "label_scale": label_scale,
-        "label_text_color_mode": label_text_color_mode, "detail_density": 0.5,
+        "label_text_color_mode": label_text_color_mode, "detail_density": detail_density,
     }
     # Resolve the label font: an absolute path, or a filename in yea_hud/fonts/.
     font_path = None

@@ -117,7 +117,6 @@ def main():
         torch.save({"frames": frames, "fps": fps, "W": W, "H": H, "track_data": td_cpu}, cache)
         track_data = td_cpu
     pm = track_data.get("packed_masks")
-    pm = track_data.get("packed_masks")
     print("REAL track_data: packed_masks=",
           (tuple(pm.shape), str(pm.dtype)) if pm is not None else None,
           "| n_frames=", track_data.get("n_frames"),
@@ -125,17 +124,22 @@ def main():
           "| scores=", [round(float(s), 3) for s in (track_data.get("scores") or [])][:8],
           "| orig_size=", track_data.get("orig_size"))
 
-    # assets
+    # assets — scan the bundled folder (filename-agnostic): names with "target" are
+    # reticles, the rest are frame designs. Aspect-aware selection later picks the
+    # design whose proportion matches each box, so order here is irrelevant.
+    import glob as _glob
     manual = {}
-    for i in range(1, 7):
-        p = os.path.join(PROJ, "examples", "assets", f"Untitled-1_Frame {i}.png")
-        if os.path.exists(p):
-            im, mk = ap._load_pair_from_file(p); manual[f"frame_{i}_image"] = im; manual[f"frame_{i}_mask"] = mk
-    for i, fn in enumerate(["Untitled-1_TARGET POINT.png", "Untitled-1_TARGET POINT 2.png"], 1):
-        p = os.path.join(PROJ, "examples", "assets", fn)
-        if os.path.exists(p):
-            im, mk = ap._load_pair_from_file(p); manual[f"target_{i}_image"] = im; manual[f"target_{i}_mask"] = mk
+    adir = os.path.join(PROJ, "examples", "assets")
+    allp = sorted(_glob.glob(os.path.join(adir, "*.png")))
+    frame_files = [p for p in allp if "target" not in os.path.basename(p).lower()][:6]
+    target_files = [p for p in allp if "target" in os.path.basename(p).lower()][:2]
+    for i, p in enumerate(frame_files, 1):
+        im, mk = ap._load_pair_from_file(p); manual[f"frame_{i}_image"] = im; manual[f"frame_{i}_mask"] = mk
+    for i, p in enumerate(target_files, 1):
+        im, mk = ap._load_pair_from_file(p); manual[f"target_{i}_image"] = im; manual[f"target_{i}_mask"] = mk
     asset_pack = ap.run_asset_pack(folder="", manual=manual)
+    print("assets:", len(frame_files), "frame +", len(target_files), "target ->",
+          [os.path.basename(p) for p in frame_files])
 
     annotations = {"version": 1, "tracks": [{"track_id": f"person:{i}", "category": "person",
                    "short_label": "PERSON", "detailed_label": "PERSON DETECTED BY SAM3",
@@ -144,10 +148,11 @@ def main():
     print("rendering HUD on real SAM3 tracks…")
     images, _dbg, tj = hud.run_hud_renderer(
         frames, track_data=track_data, annotations_json=json.dumps(annotations),
-        seed=77, style_mode="mixed", max_objects=12, display_probability=1.0, padding_x=8, padding_y=8,
+        seed=77, style_mode="assets_only", max_objects=12, display_probability=1.0, padding_x=8, padding_y=8,
         smoothing=0.5, track_iou_threshold=0.25, track_memory_frames=8, frame_opacity=1.0,
-        fill_opacity=0.0, label_opacity=0.92, line_width=2, target_scale=0.34,
-        caption_mode="mixed", label_length_mode="adaptive", color_mode="track_random", asset_pack=asset_pack)
+        fill_opacity=0.0, label_opacity=0.92, line_width=2, target_scale=0.22,
+        target_probability=0.0, show_child_annotations=False,
+        caption_mode="detailed", label_length_mode="adaptive", color_mode="track_random", asset_pack=asset_pack)
     print("tracking_json:", tj)
 
     import av
