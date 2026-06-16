@@ -185,6 +185,7 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
                      secondary_annotation_scale=0.6, annotation_priority_threshold=0,
                      color_mode="track_random", font="", asset_pack=None,
                      target_probability=0.0, fill_probability=0.25, detail_density=0.0,
+                     asset_line_boost=2,
                      progress=None, interrupt=None):
     """Render HUD overlays. Returns (images, debug_preview, tracking_json_str)."""
     import torch  # noqa: F401
@@ -232,7 +233,8 @@ def run_hud_renderer(frames, *, seed, style_mode, max_objects, display_probabili
         frame_pairs = list(zip(frame_images or [], frame_masks or []))
         target_pairs = list(zip(target_images or [], target_masks or []))
     assets = AssetBank(frame_pairs, target_pairs, trim=trim_transparent_assets,
-                       fit_frame=asset_fit_mode, fit_target="contain", max_cache_items=max_cache_items)
+                       fit_frame=asset_fit_mode, fit_target="contain", max_cache_items=max_cache_items,
+                       line_boost=asset_line_boost)
 
     tracker = Tracker(seed=int(seed), iou_threshold=track_iou_threshold, max_centroid_ratio=0.35,
                       memory_frames=int(track_memory_frames), smoothing=smoothing, palette=palette,

@@ -45,7 +45,10 @@ by the Asset Pack by default so the box interior stays transparent.
 `target_probability` FLOAT (chance a track shows a centre reticle; `0` = none — the frame
 design already brackets the box) · `fill_probability` FLOAT · `detail_density` FLOAT
 (procedural machine-vision registration marks; default `0` since user designs carry their
-own marks — raise it for the asset-less procedural look).
+own marks — raise it for the asset-less procedural look) · `asset_line_boost` INT
+(stroke-thickening in px for frame/target PNGs, default `2` — a thin-line design shrunk
+onto a small box renders faint, so its strokes are dilated by this amount in output
+pixels; `0` = strokes as-is, raise for bolder brackets).
 
 **Outputs:** `images` IMAGE · `debug_preview` IMAGE (first annotated frame) ·
 `tracking_json` STRING.

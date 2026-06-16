@@ -458,6 +458,39 @@ def test_frame_asset_for_aspect_single_and_bad_inputs_fall_back():
 
 
 # ---------------------------------------------------------------------------
+# Stroke thickening (line_boost / dilate_rgba) — keep thin designs legible
+# ---------------------------------------------------------------------------
+
+def test_dilate_rgba_thickens_and_is_noop_at_zero():
+    rgba = np.zeros((5, 5, 4), dtype=np.float32)
+    rgba[2, 2, :] = 1.0                       # one bright pixel
+    out = A.dilate_rgba(rgba, 1)
+    assert out[1:4, 1:4, 3].min() == 1.0      # grew to a 3x3 alpha block
+    assert out[0, 0, 3] == 0.0                # but not the far corner
+    assert out[1, 1, 0] == 1.0               # colour follows alpha (no dark fringe)
+    assert np.array_equal(A.dilate_rgba(rgba, 0), rgba)   # k<=0 -> identity
+
+
+def test_line_boost_bolds_overlay_alpha():
+    # A tiny dot on a transparent canvas, rendered WITHOUT trim so the output keeps
+    # transparent margin for the dilation to grow into (a solid trimmed block would
+    # stretch to fill the whole overlay, leaving no room).
+    rgb = np.zeros((20, 20, 3), dtype=np.float32)
+    a = np.zeros((20, 20), dtype=np.float32)
+    rgb[9:11, 9:11, :] = 1.0
+    a[9:11, 9:11] = 1.0
+    pair = (torch.from_numpy(rgb).unsqueeze(0), _loadimage_mask(a))
+    thin = A.AssetBank([pair], [], trim=False, fit_frame="stretch",
+                       fit_target="stretch", max_cache_items=16, line_boost=0)
+    bold = A.AssetBank([pair], [], trim=False, fit_frame="stretch",
+                       fit_target="stretch", max_cache_items=16, line_boost=2)
+    a_thin = float(thin.frame_rgba(0, 40, 40, RED, 1.0)[..., 3].sum())
+    a_bold = float(bold.frame_rgba(0, 40, 40, RED, 1.0)[..., 3].sum())
+    assert 0.0 < a_thin < 40 * 40             # leaves transparent margin
+    assert a_bold > a_thin                    # dilation adds alpha footprint
+
+
+# ---------------------------------------------------------------------------
 # Script runner (mirrors the other test modules)
 # ---------------------------------------------------------------------------
 

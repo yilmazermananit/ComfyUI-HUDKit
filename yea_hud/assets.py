@@ -80,6 +80,7 @@ from .types import ASSET_FIT_MODES
 __all__ = [
     "AssetBank",
     "color_to_cache_id",
+    "dilate_rgba",
     "snap_bucket",
 ]
 
@@ -153,6 +154,31 @@ def color_to_cache_id(color_rgb: Sequence[float]) -> int:
     return (r << 16) | (g << 8) | b
 
 
+def dilate_rgba(rgba: np.ndarray, k: int) -> np.ndarray:
+    """Thicken thin strokes by a morphological max-dilation of radius ``k`` (px).
+
+    A thin-line design (1-2px strokes) shrunk onto a small tracked box renders
+    near sub-pixel and reads as faint. Dilating the *output* overlay by ``k`` px
+    bolds every stroke by a constant amount in final-image pixels — so a small box
+    (where the problem is worst) gains the most apparent weight, a large box barely
+    changes. Per-channel max over a ``(2k+1)x(2k+1)`` edge-clamped window: the alpha
+    grows the stroke footprint and the colour channels follow it outward, so the
+    bolder edge stays the palette colour (not a dark fringe). ``k <= 0`` is a no-op.
+    """
+    if k <= 0 or rgba is None or rgba.ndim != 3:
+        return rgba
+    H, W = rgba.shape[:2]
+    padded = np.pad(rgba, ((k, k), (k, k), (0, 0)), mode="edge")
+    out = rgba.copy()
+    span = 2 * k + 1
+    for dy in range(span):
+        for dx in range(span):
+            if dy == k and dx == k:
+                continue
+            np.maximum(out, padded[dy:dy + H, dx:dx + W], out=out)
+    return out
+
+
 class AssetBank:
     """Manage user frame/target PNG slots and serve recolored, resized overlays.
 
@@ -194,10 +220,14 @@ class AssetBank:
         fit_frame: str,
         fit_target: str,
         max_cache_items: int,
+        line_boost: int = 0,
     ) -> None:
         self.trim: bool = bool(trim)
         self.fit_frame: str = fit_frame if fit_frame in ASSET_FIT_MODES else "stretch"
         self.fit_target: str = fit_target if fit_target in ASSET_FIT_MODES else "stretch"
+        # Stroke-thickening (px) applied to every rendered overlay so thin-line
+        # designs stay legible when shrunk onto a small tracked box. See dilate_rgba.
+        self.line_boost: int = max(0, int(line_boost))
 
         # Normalise the raw slot lists and compute eligible (connected) indices.
         self._frame_slots: List[Tuple[Optional[object], Optional[object]]] = (
@@ -438,6 +468,9 @@ class AssetBank:
 
             # 6. resize to the snapped target size (Lanczos down / Bicubic up).
             rgba = alpha_mod.resize_rgba(rgba, w_bucket, h_bucket)
+            # 6b. thicken thin strokes so the design reads at small box sizes.
+            if self.line_boost > 0:
+                rgba = dilate_rgba(rgba, self.line_boost)
             cached = np.ascontiguousarray(rgba.astype(np.float32, copy=False))
             self._cache.put(cache_key, cached)
 
