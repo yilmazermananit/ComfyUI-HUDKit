@@ -1,4 +1,4 @@
-"""YEA HUD Renderer — main node.
+"""HUDKit Renderer — main node.
 
 Consumes native SAM3 tracking output (preferred: SAM3_TRACK_DATA; fallback:
 BOUNDING_BOX and/or MASK), tracks stable identities, attaches semantic annotations
@@ -19,16 +19,16 @@ import logging
 
 logger = logging.getLogger("YEAHUD.renderer")
 
-DISPLAY_NAME = "YEA HUD Renderer"
+DISPLAY_NAME = "HUDKit Renderer"
 NODE_ID = "YEAHUDRenderer"
-CATEGORY = "YEA/HUD"
+CATEGORY = "HUDKit"
 TRACK_DATA_TYPE = "SAM3_TRACK_DATA"
 ANNOTATIONS_TYPE = "YEA_ANNOTATIONS"
 
 DETECTION_SOURCE_ERROR = (
-    "YEA HUD Renderer requires either native SAM3_TRACK_DATA, native BOUNDING_BOX, "
+    "HUDKit Renderer requires either native SAM3_TRACK_DATA, native BOUNDING_BOX, "
     "or MASK input. Connect SAM3 Video Track (track_data), SAM3 Detect (bboxes/masks), "
-    "or a MASK source. Use 'YEA Inspect SAM3 Track Data' / 'YEA Inspect Bounding "
+    "or a MASK source. Use 'HUDKit Inspect SAM3 Track Data' / 'HUDKit Inspect Bounding "
     "Boxes' to verify the real structure."
 )
 
@@ -526,7 +526,7 @@ try:
                     io.String.Input("font", default="", optional=True,
                                     tooltip="Label font: a filename in yea_hud/fonts/ or an absolute .ttf/.otf path. Empty = bundled/system default."),
                     YEAAssetPack.Input("asset_pack", optional=True,
-                                       tooltip="From 'YEA HUD Asset Pack' — your 6 frame + 2 target PNGs in one input."),
+                                       tooltip="From 'HUDKit Asset Pack' — your 6 frame + 2 target PNGs in one input."),
                     # --- captions (fallback when no annotations) / palette ---
                     io.Combo.Input("caption_source", options=list(CAPTION_SOURCES), default="fixed", optional=True),
                     io.String.Input("fixed_label", default="PERSON", optional=True),

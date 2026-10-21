@@ -1,4 +1,4 @@
-"""Color resolution for ComfyUI-YEAHUD (brief §14).
+"""Color resolution for ComfyUI-HUDKit (brief §14).
 
 This module is schema-agnostic: it imports only the Python standard library and
 sibling :mod:`yea_hud` modules (``types`` for the palette constants, ``utils``

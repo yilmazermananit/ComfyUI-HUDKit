@@ -1,4 +1,4 @@
-"""YEA Annotation JSON — paste / edit / validate annotation JSON manually.
+"""HUDKit Annotation JSON — paste / edit / validate annotation JSON manually.
 
 Turns a hand-written or pasted YEA_ANNOTATIONS JSON string into a validated
 ``AnnotationSet`` object (+ normalized JSON + a validation report). No network,
@@ -11,9 +11,9 @@ import logging
 
 logger = logging.getLogger("YEAHUD.annotation_json")
 
-DISPLAY_NAME = "YEA Annotation JSON"
+DISPLAY_NAME = "HUDKit Annotation JSON"
 NODE_ID = "YEAAnnotationJSON"
-CATEGORY = "YEA/HUD/Annotation"
+CATEGORY = "HUDKit/Annotation"
 ANNOTATIONS_TYPE = "YEA_ANNOTATIONS"
 
 _EXAMPLE = (

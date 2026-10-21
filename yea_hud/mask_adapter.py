@@ -1,6 +1,6 @@
 """mask_adapter.py — native MASK handling + connected components.
 
-Schema-agnostic core for ComfyUI-YEAHUD (brief §6.2 node, §8 align). Pure,
+Schema-agnostic core for ComfyUI-HUDKit (brief §6.2 node, §8 align). Pure,
 deterministic compute only: **no** ComfyUI imports, no network, no subprocess,
 no ``eval``/``exec``, no file IO. Allowed dependencies are the standard library,
 :mod:`numpy`, :mod:`PIL` (unused here but allowed), :mod:`torch`, the shared
@@ -33,7 +33,7 @@ Three public entry points:
   ``min_area`` drop filter and a ``merge_distance`` near-box merge. Implemented
   in pure numpy (a flood-fill labeller); an optional OpenCV fast path is used
   when ``cv2`` is importable, producing identical boxes.
-* :func:`masks_to_native_bboxes` — for the *YEA Mask to Native BBoxes* node:
+* :func:`masks_to_native_bboxes` — for the *HUDKit Mask to Native BBoxes* node:
   returns the **native** ``BOUNDING_BOX`` runtime value
   (``list[list[{"x","y","width","height","score"}]]`` of absolute-pixel xywh),
   with NO custom type, so the output drops straight into any consumer that
@@ -571,7 +571,7 @@ def masks_to_native_bboxes(
 ) -> List[List[dict]]:
     """Convert a MASK batch to the native ``BOUNDING_BOX`` runtime value.
 
-    This backs the *YEA Mask to Native BBoxes* node. The return value matches
+    This backs the *HUDKit Mask to Native BBoxes* node. The return value matches
     exactly what SAM3 / Mediapipe emit (``docs/runtime_findings.md`` §3) so it
     plugs into any consumer of ``BOUNDING_BOX`` with **no custom type**::
 

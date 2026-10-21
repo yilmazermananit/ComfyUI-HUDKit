@@ -1,4 +1,4 @@
-"""Schema-agnostic core types for ComfyUI-YEAHUD.
+"""Schema-agnostic core types for ComfyUI-HUDKit.
 
 This module is the *contract* every other module in ``yea_hud`` implements
 against. It depends only on the Python standard library (no torch, no PIL, no

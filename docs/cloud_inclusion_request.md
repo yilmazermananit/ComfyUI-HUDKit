@@ -5,9 +5,9 @@
 > **no documented self-serve path**; this is a curation request (see
 > `cloud_compatibility.md` §4). Fill the bracketed fields before sending.
 
-**Node pack:** ComfyUI-YEAHUD
-**Repository:** [https://github.com/<org>/ComfyUI-YEAHUD]
-**Registry id:** comfyui-yeahud (PublisherId: [your-publisher-id])
+**Node pack:** ComfyUI-HUDKit
+**Repository:** https://github.com/yilmazermananit/ComfyUI-HUDKit
+**Registry id:** comfyui-hudkit (PublisherId: [your-publisher-id])
 **Author / contact:** DifferentGuys Studio (YEA) — erman@differentguys.studio
 **License:** MIT
 
@@ -34,7 +34,7 @@ frame/target assets). It consumes the **native** `SAM3_TRACK_DATA` (preferred) o
 - `docs/runtime_findings.md` — exact native type structures the pack was built against (source-cited).
 - `docs/cloud_compatibility.md` — honest target-version + inclusion analysis.
 - Example workflow + integration test report against the real native SAM3 type contract.
-- Inspector nodes (`YEA Inspect SAM3 Track Data`, `YEA Inspect Bounding Boxes`) so reviewers can confirm socket structures empirically inside Cloud.
+- Inspector nodes (`HUDKit Inspect SAM3 Track Data`, `HUDKit Inspect Bounding Boxes`) so reviewers can confirm socket structures empirically inside Cloud.
 
 ## Open question for the Comfy team
 Is core SAM3 (`comfy_extras/nodes_sam3.py`) + its weights enabled on Cloud today, or

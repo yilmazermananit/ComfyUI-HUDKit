@@ -1,4 +1,4 @@
-"""YEA Inspect SAM3 Track Data — debug node.
+"""HUDKit Inspect SAM3 Track Data — debug node.
 
 Logs and returns a safe structural summary of a native SAM3_TRACK_DATA value
 (the dict produced by SAM3 Video Track: packed_masks / n_frames / scores /
@@ -14,9 +14,9 @@ import logging
 
 logger = logging.getLogger("YEAHUD.inspect_track_data")
 
-DISPLAY_NAME = "YEA Inspect SAM3 Track Data"
+DISPLAY_NAME = "HUDKit Inspect SAM3 Track Data"
 NODE_ID = "YEAInspectSAM3TrackData"
-CATEGORY = "YEA/HUD"
+CATEGORY = "HUDKit"
 
 # Native custom type string verified from comfy_extras/nodes_sam3.py:
 #   SAM3TrackData = io.Custom("SAM3_TRACK_DATA")
@@ -29,7 +29,7 @@ def run_inspect_track_data(track_data=None) -> str:
 
     summary = summarize_track_data(track_data)
     text = json.dumps(summary, indent=2, ensure_ascii=False, default=str)
-    logger.info("YEA Inspect SAM3 Track Data:\n%s", text)
+    logger.info("HUDKit Inspect SAM3 Track Data:\n%s", text)
     return text
 
 

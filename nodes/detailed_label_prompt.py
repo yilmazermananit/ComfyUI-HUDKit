@@ -1,4 +1,4 @@
-"""YEA Detailed Label Prompt — generate a strict VLM prompt (NO network call).
+"""HUDKit Detailed Label Prompt — generate a strict VLM prompt (NO network call).
 
 Produces a system prompt, a user prompt and a JSON schema string that any connected
 vision-language / partner node can consume to describe a track crop. This node never
@@ -11,9 +11,9 @@ from __future__ import annotations
 
 import json
 
-DISPLAY_NAME = "YEA Detailed Label Prompt"
+DISPLAY_NAME = "HUDKit Detailed Label Prompt"
 NODE_ID = "YEADetailedLabelPrompt"
-CATEGORY = "YEA/HUD/Annotation"
+CATEGORY = "HUDKit/Annotation"
 
 DETAIL_LEVELS = ("short", "medium", "detailed")
 

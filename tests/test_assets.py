@@ -2,8 +2,8 @@
 
 Runnable BOTH ways:
 
-* pytest:   /Users/differenterman/Documents/ComfyUI/.venv/bin/python -m pytest tests/test_assets.py -q
-* script:   /Users/differenterman/Documents/ComfyUI/.venv/bin/python tests/test_assets.py
+* pytest:   python -m pytest tests/test_assets.py -q
+* script:   python tests/test_assets.py
             (runs every test, prints a summary, ``sys.exit(1)`` on any failure)
 
 No ComfyUI, no network, no model files. Tiny synthetic numpy/torch fixtures only.

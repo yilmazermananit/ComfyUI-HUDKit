@@ -1,6 +1,6 @@
 """compositor.py — per-frame HUD draw orchestration (brief §17).
 
-This is **the integration point** of ComfyUI-YEAHUD: the seam where the
+This is **the integration point** of ComfyUI-HUDKit: the seam where the
 schema-agnostic business logic (tracking, style, placement, captions, assets)
 is finally rasterized over the real video frames. The node layer
 (``nodes/hud_renderer.py``) builds, per frame, a list of

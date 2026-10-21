@@ -4,8 +4,8 @@ Two importable graphs are provided:
 
 | File | Use |
 |------|-----|
-| `sam3_hud_video_workflow.json` | **Primary.** Load Video → SAM3 Video Track (`SAM3_TRACK_DATA`) → YEA HUD Renderer → Create Video → Save Video. Stable native identities. |
-| `sam3_hud_image_batch_workflow.json` | Fallback. SAM3 Detect (`BOUNDING_BOX` + `MASK`) → YEA HUD Renderer, for per-frame image-batch detection without persistent tracking. |
+| `sam3_hud_video_workflow.json` | **Primary.** Load Video → SAM3 Video Track (`SAM3_TRACK_DATA`) → HUDKit Renderer → Create Video → Save Video. Stable native identities. |
+| `sam3_hud_image_batch_workflow.json` | Fallback. SAM3 Detect (`BOUNDING_BOX` + `MASK`) → HUDKit Renderer, for per-frame image-batch detection without persistent tracking. |
 
 ## What you do
 1. **Load Video** — pick your clip.

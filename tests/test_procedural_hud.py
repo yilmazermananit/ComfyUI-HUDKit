@@ -2,8 +2,8 @@
 
 Runnable two ways:
 
-    /Users/differenterman/Documents/ComfyUI/.venv/bin/python -m pytest tests/test_procedural_hud.py -q
-    /Users/differenterman/Documents/ComfyUI/.venv/bin/python tests/test_procedural_hud.py
+    python -m pytest tests/test_procedural_hud.py -q
+    python tests/test_procedural_hud.py
 
 The ``__main__`` block runs every ``test_*`` function, prints a summary, and
 ``sys.exit(1)`` on any failure. No ComfyUI, no network, no model files — only

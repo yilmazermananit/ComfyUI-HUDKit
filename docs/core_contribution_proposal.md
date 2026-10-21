@@ -27,7 +27,7 @@ matching SAM3's "extra-dependency-free, single-GPU" design.
 ## What is intentionally LEFT OUT of the core version
 User PNG frame/target assets, alpha recovery, recolor pipeline, the IoU fallback
 tracker, BOUNDING_BOX/MASK adapters, caption JSON/template system, asset packs.
-These stay in the branded **ComfyUI-YEAHUD** custom pack (richer, Pillow-based).
+These stay in the branded **ComfyUI-HUDKit** custom pack (richer, Pillow-based).
 
 ## Path
 1. Open a discussion/RFC referencing PR #13408 (SAM3) and `SAM3_TrackPreview`.

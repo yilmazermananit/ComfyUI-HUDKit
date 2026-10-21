@@ -1,4 +1,4 @@
-"""Caption text resolution for ComfyUI-YEAHUD (brief §13).
+"""Caption text resolution for ComfyUI-HUDKit (brief §13).
 
 This module turns a per-detection rendering request into the *raw* caption
 string that the HUD label strip will display. It is intentionally

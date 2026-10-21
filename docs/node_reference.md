@@ -1,10 +1,10 @@
-# Node Reference — ComfyUI-YEAHUD
+# Node Reference — ComfyUI-HUDKit
 
-8 nodes. Categories: `YEA/HUD` (renderer + inspectors + mask→bbox) and
-`YEA/HUD/Annotation` (the semantic-label layer). All register via the V3 schema
+8 nodes. Categories: `HUDKit` (renderer + inspectors + mask→bbox) and
+`HUDKit/Annotation` (the semantic-label layer). All register via the V3 schema
 (`comfy_entrypoint`); a V1 `NODE_CLASS_MAPPINGS` fallback mirrors them on older ComfyUI.
 
-## YEA HUD Renderer  (`YEAHUDRenderer`)
+## HUDKit Renderer  (`YEAHUDRenderer`)
 Main compositor.
 
 **Key inputs** (required): `frames` IMAGE; `seed` INT; `style_mode` COMBO
@@ -29,7 +29,7 @@ dense_editorial`) · `label_density` FLOAT · `max_labels_per_frame` INT ·
 
 **Assets** (optional): `frame_1..6_image` + `frame_1..6_mask`, `target_1..2_image` +
 `target_1..2_mask` (Load Image IMAGE+MASK pairs), or a single `asset_pack` from the
-**YEA HUD Asset Pack** node. White-on-transparent PNGs; recolored to the track color.
+**HUDKit Asset Pack** node. White-on-transparent PNGs; recolored to the track color.
 Frame designs are typically a top label-bar + thin corner brackets; supply several at
 different proportions (a portrait one, a square one, a wide one) and the renderer does
 **aspect-aware selection** — per box it picks the design whose *content* aspect (w/h)
@@ -53,36 +53,36 @@ pixels; `0` = strokes as-is, raise for bolder brackets).
 **Outputs:** `images` IMAGE · `debug_preview` IMAGE (first annotated frame) ·
 `tracking_json` STRING.
 
-## YEA Inspect SAM3 Track Data  (`YEAInspectSAM3TrackData`)
+## HUDKit Inspect SAM3 Track Data  (`YEAInspectSAM3TrackData`)
 In: `track_data` SAM3_TRACK_DATA. Out: `debug_json` STRING, `track_data` (pass-through).
 Logs packed_masks shape/dtype, n_frames, scores, orig_size, per-frame visibility.
 
-## YEA Inspect Bounding Boxes  (`YEAInspectBoundingBoxes`)
+## HUDKit Inspect Bounding Boxes  (`YEAInspectBoundingBoxes`)
 In: `bboxes` BOUNDING_BOX (opt), `masks` MASK (opt). Out: `debug_json` STRING, `bboxes`
 (pass-through). Summarizes type/nesting/keys/per-frame counts/coord format (bounded).
 
-## YEA Mask to Native BBoxes  (`YEAMaskToNativeBBoxes`)
+## HUDKit Mask to Native BBoxes  (`YEAMaskToNativeBBoxes`)
 In: `masks` MASK, `threshold` FLOAT, `min_area` INT, `merge_distance` INT.
 Out: `bboxes` BOUNDING_BOX (native `list[list[{x,y,width,height,score}]]`), `debug_json` STRING.
 
-## YEA Annotation JSON  (`YEAAnnotationJSON`)
+## HUDKit Annotation JSON  (`YEAAnnotationJSON`)
 In: `annotations_json` STRING (multiline), `strict` BOOL. Out: `annotations`
 YEA_ANNOTATIONS, `normalized_json` STRING, `validation_report` STRING.
 
-## YEA Annotation Builder  (`YEAAnnotationBuilder`)
+## HUDKit Annotation Builder  (`YEAAnnotationBuilder`)
 In (all opt): `track_data` SAM3_TRACK_DATA, `crop_manifest_json`, `captions_json`
 (VLM list OR by-track dict), `manual_annotations_json`, `secondary_detections_json`,
 `default_category`, `primary_group_label`, `label_template`. Out: `annotations`,
 `annotations_json`, `validation_report`. Reduces per-crop VLM responses to one
 consensus label per track.
 
-## YEA Track Crop Extractor  (`YEATrackCropExtractor`)
+## HUDKit Track Crop Extractor  (`YEATrackCropExtractor`)
 In: `frames` IMAGE, `track_data` SAM3_TRACK_DATA, `samples_per_track` INT,
 `crop_padding` FLOAT, `minimum_track_area` FLOAT, `selection_mode` COMBO
 (`best/largest/sharpest/most_centered/multi_sample`). Out: `crops` IMAGE,
 `crop_manifest_json` STRING, `contact_sheet` IMAGE, `track_indices_json` STRING.
 
-## YEA Detailed Label Prompt  (`YEADetailedLabelPrompt`)
+## HUDKit Detailed Label Prompt  (`YEADetailedLabelPrompt`)
 In: `detail_level` COMBO, `include_clothing/action/objects/scene/visible_details` BOOL,
 `maximum_words` INT, `uppercase` BOOL. Out: `system_prompt` STRING, `user_prompt`
 STRING, `json_schema` STRING. **No network** — emits text only.

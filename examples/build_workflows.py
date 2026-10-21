@@ -1,7 +1,7 @@
 """Generate + validate importable ComfyUI workflow JSON (litegraph UI format).
 
 Dev tool (not shipped to the Registry — see .comfyignore). Introspects the V3
-schemas of the YEA nodes for their canonical socket order, hardcodes the native
+schemas of the HUDKit nodes for their canonical socket order, hardcodes the native
 ComfyUI node socket specs (verified from comfy_extras source), builds the graphs
 with correct slot indices, VALIDATES that every link connects type-matching sockets
 and that every node type is registered, then writes the .json files next to this
@@ -44,7 +44,7 @@ NATIVE = {
                     "out": [("masks", "MASK"), ("bboxes", "BOUNDING_BOX")]},
     "CreateVideo": {"in": [("images", "IMAGE"), ("audio", "AUDIO")], "widgets": [("fps", 24.0), ("bit_depth", 8)],
                     "out": [("VIDEO", "VIDEO")]},
-    "SaveVideo": {"in": [("video", "VIDEO")], "widgets": [("filename_prefix", "video/YEAHUD"),
+    "SaveVideo": {"in": [("video", "VIDEO")], "widgets": [("filename_prefix", "video/HUDKit"),
                                                           ("format", "auto"), ("codec", "auto")], "out": []},
     "LoadImage": {"in": [], "widgets": [("image", "frame.png")], "out": [("IMAGE", "IMAGE"), ("MASK", "MASK")]},
 }

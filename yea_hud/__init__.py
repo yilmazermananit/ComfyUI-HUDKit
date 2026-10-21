@@ -1,4 +1,4 @@
-"""yea_hud — schema-agnostic business logic for ComfyUI-YEAHUD.
+"""yea_hud — schema-agnostic business logic for ComfyUI-HUDKit.
 
 This package intentionally performs NO heavy imports at package-init time
 (no torch / PIL at module load) so that ``yea_hud.types`` and pure helpers

@@ -1,4 +1,4 @@
-# ComfyUI-YEAHUD
+# ComfyUI-HUDKit
 
 Designed, densely-labelled **HUD video overlays** driven by **native SAM3 tracking**.
 Track people/objects with SAM3, attach stable short/detailed semantic labels, drop
@@ -58,8 +58,8 @@ designs work at full opacity.
 
 ## 4. Install — ComfyUI Manager / Registry
 
-Search **"YEAHUD"** in ComfyUI-Manager, or once published:
-`comfy node install comfyui-yeahud`.
+This project is available from GitHub. It is **not yet published to the Comfy
+Registry or listed in ComfyUI-Manager**. Use the manual installation below.
 
 > Comfy Cloud note: custom-node *upload* is disabled on Cloud; running there requires
 > Comfy Org to add the pack to the pre-installed set. See `docs/cloud_compatibility.md`.
@@ -68,11 +68,12 @@ Search **"YEAHUD"** in ComfyUI-Manager, or once published:
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone <repo-url> ComfyUI-YEAHUD
-# deps (torch already present):
-ComfyUI/.venv/bin/pip install numpy Pillow
+git clone https://github.com/yilmazermananit/ComfyUI-HUDKit.git
+cd ComfyUI-HUDKit
+# Use the Python interpreter from your ComfyUI environment (torch already installed).
+python -m pip install -r requirements.txt
 ```
-Restart ComfyUI. The nodes appear under **`YEA/HUD`** and **`YEA/HUD/Annotation`**.
+Restart ComfyUI. The nodes appear under **`HUDKit`** and **`HUDKit/Annotation`**.
 
 ## 6. SAM3 example workflows
 
@@ -80,9 +81,9 @@ Import any JSON from `examples/` (drag onto the canvas):
 
 | File | Flow |
 |---|---|
-| `sam3_hud_video_workflow.json` | **Primary.** Load Video → Get Video Components → SAM3 Video Track → **YEA HUD Renderer** → Create Video → Save Video |
+| `sam3_hud_video_workflow.json` | **Primary.** Load Video → Get Video Components → SAM3 Video Track → **HUDKit Renderer** → Create Video → Save Video |
 | `sam3_hud_image_batch_workflow.json` | SAM3 Detect (bbox+mask) → renderer (per-frame, no persistent tracking) |
-| `manual_annotation_workflow.json` | + **YEA Annotation JSON** for hand-written detailed labels |
+| `manual_annotation_workflow.json` | + **HUDKit Annotation JSON** for hand-written detailed labels |
 | `vlm_annotation_workflow.json` | + **Track Crop Extractor** → your VLM → **Annotation Builder** (one label per track) |
 | `dense_multi_category_workflow.json` | two SAM3 groups (e.g. `person` + `face`) merged into one dense HUD |
 
@@ -99,10 +100,10 @@ You never convert bbox types or add SEGS/Impact/KJNodes bridges.
 
 Full I/O in [`docs/node_reference.md`](docs/node_reference.md).
 
-- **YEA HUD Renderer** — `frames` + (`track_data` | `bboxes` | `masks`) + optional `annotations` + 6 frame / 2 target PNG pairs → `images`, `debug_preview`, `tracking_json`.
-- **YEA Inspect SAM3 Track Data** / **YEA Inspect Bounding Boxes** — print the real runtime structure; pass through unchanged.
-- **YEA Mask to Native BBoxes** — MASK → native `BOUNDING_BOX` (connected components; no third-party type).
-- **YEA Annotation JSON** / **Annotation Builder** / **Track Crop Extractor** / **Detailed Label Prompt** — the model-independent annotation layer (§10).
+- **HUDKit Renderer** — `frames` + (`track_data` | `bboxes` | `masks`) + optional `annotations` + 6 frame / 2 target PNG pairs → `images`, `debug_preview`, `tracking_json`.
+- **HUDKit Inspect SAM3 Track Data** / **HUDKit Inspect Bounding Boxes** — print the real runtime structure; pass through unchanged.
+- **HUDKit Mask to Native BBoxes** — MASK → native `BOUNDING_BOX` (connected components; no third-party type).
+- **HUDKit Annotation JSON** / **Annotation Builder** / **Track Crop Extractor** / **Detailed Label Prompt** — the model-independent annotation layer (§10).
 
 ## 9. Default settings
 
@@ -118,7 +119,7 @@ caption_mode auto · label_length_mode adaptive · label_collision_mode repositi
 
 The renderer **never invents** descriptions. Rich text comes from `YEA_ANNOTATIONS`:
 
-- **Manual:** paste JSON into **YEA Annotation JSON** (see schema in `docs/node_reference.md`).
+- **Manual:** paste JSON into **HUDKit Annotation JSON** (see schema in `docs/node_reference.md`).
 - **VLM:** **Track Crop Extractor** picks a few representative crops per track → your VLM (via **Detailed Label Prompt**'s strict JSON prompt) → **Annotation Builder** reduces multiple crop responses to one consensus label per track and caches it.
 
 By-track caption JSON example:
@@ -142,7 +143,7 @@ This pack consumes **only** native ComfyUI types: `SAM3_TRACK_DATA`, `BOUNDING_B
 (the `list[list[{x,y,width,height}]]` SAM3/mediapipe emit), `MASK`. It does **not**
 use `BBOX` / `BBOX_LIST` / `SEGS` / `F_BBOXES` / Impact / KJNodes formats. If your
 detector emits a custom type, convert with its own "to BOUNDING_BOX" node or feed a
-MASK into **YEA Mask to Native BBoxes**. Don't trust socket color — verify types
+MASK into **HUDKit Mask to Native BBoxes**. Don't trust socket color — verify types
 with the Inspect nodes.
 
 ## 13. Performance
@@ -154,5 +155,27 @@ with the Inspect nodes.
 
 ## 14. License
 
-MIT — see [`LICENSE`](LICENSE). © 2026 DifferentGuys Studio (YEA).
+MIT — see [`LICENSE`](LICENSE). Copyright © 2026 DifferentGuys Studio.
+The bundled Tektur font is distributed under its own [SIL Open Font License](yea_hud/fonts/Tektur-OFL.txt).
 Built against native ComfyUI SAM3 (PR #13408). Not affiliated with Comfy Org or Meta.
+
+
+## Development and compatibility
+
+ComfyUI-HUDKit was previously named ComfyUI-YEAHUD. Display names and menu categories
+now use **HUDKit**. Existing `YEA…` node IDs, socket type names, and the `yea_hud`
+Python package are retained so saved workflows continue to load. Install only one
+copy of the pack; rename an existing `ComfyUI-YEAHUD` installation folder to
+`ComfyUI-HUDKit` rather than installing both.
+
+To run the synthetic suite, use a Python environment with `torch` installed:
+
+```bash
+python -m pip install -r requirements.txt pytest
+python -m pytest tests -q
+```
+
+The tests do not download checkpoints or call external services. The historical
+live SAM3 test report is dated June 2026; live GPU/model inference is separate
+from these synthetic checks. See [CONTRIBUTING.md](CONTRIBUTING.md) to report bugs
+or contribute improvements.

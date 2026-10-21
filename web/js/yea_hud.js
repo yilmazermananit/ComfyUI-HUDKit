@@ -1,4 +1,4 @@
-// ComfyUI-YEAHUD — OPTIONAL frontend UX.
+// ComfyUI-HUDKit — OPTIONAL frontend UX.
 // Rendering works fully without this file. Everything is wrapped so a failure
 // here can never break the backend node or the graph.
 import { app } from "../../scripts/app.js";
@@ -6,12 +6,12 @@ import { app } from "../../scripts/app.js";
 const PALETTE = ["#FF2A1A", "#FFB0DF", "#225CFF", "#8DFF28"];
 
 app.registerExtension({
-  name: "YEA.HUD",
+  name: "HUDKit",
   async beforeRegisterNodeDef(nodeType, nodeData) {
     try {
-      if (!nodeData || nodeData.category !== "YEA/HUD") return;
+      if (!nodeData || nodeData.category !== "HUDKit") return;
 
-      // Brand tint for YEA/HUD nodes.
+      // Brand tint for HUDKit nodes.
       const onCreate = nodeType.prototype.onNodeCreated;
       nodeType.prototype.onNodeCreated = function () {
         const r = onCreate ? onCreate.apply(this, arguments) : undefined;
@@ -28,7 +28,7 @@ app.registerExtension({
         nodeType.prototype.getExtraMenuOptions = function (_, options) {
           try {
             options.push({
-              content: "YEA HUD — default palette",
+              content: "HUDKit — default palette",
               disabled: true,
             });
             options.push({
@@ -40,7 +40,7 @@ app.registerExtension({
         };
       }
     } catch (e) {
-      console.warn("[YEA.HUD] frontend extension skipped:", e);
+      console.warn("[HUDKit] frontend extension skipped:", e);
     }
   },
 });

@@ -2,8 +2,8 @@
 
 Runnable two ways:
 
-    /Users/differenterman/Documents/ComfyUI/.venv/bin/python -m pytest tests/test_captions.py -q
-    /Users/differenterman/Documents/ComfyUI/.venv/bin/python tests/test_captions.py
+    python -m pytest tests/test_captions.py -q
+    python tests/test_captions.py
 
 The second form (``__main__`` block) runs every ``test_*`` function, prints a
 summary, and ``sys.exit(1)`` on the first failure so it works without pytest

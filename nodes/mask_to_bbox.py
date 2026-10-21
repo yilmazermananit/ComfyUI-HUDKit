@@ -1,4 +1,4 @@
-"""YEA Mask to Native BBoxes — utility node.
+"""HUDKit Mask to Native BBoxes — utility node.
 
 Converts a native MASK batch into a native BOUNDING_BOX value (the same
 list[list[dict{x,y,width,height,score}]] shape SAM3 emits) using connected
@@ -13,9 +13,9 @@ import logging
 
 logger = logging.getLogger("YEAHUD.mask_to_bbox")
 
-DISPLAY_NAME = "YEA Mask to Native BBoxes"
+DISPLAY_NAME = "HUDKit Mask to Native BBoxes"
 NODE_ID = "YEAMaskToNativeBBoxes"
-CATEGORY = "YEA/HUD"
+CATEGORY = "HUDKit"
 
 
 def run_mask_to_bbox(masks, threshold: float = 0.5, min_area: int = 64,
@@ -33,7 +33,7 @@ def run_mask_to_bbox(masks, threshold: float = 0.5, min_area: int = 64,
         "params": {"threshold": threshold, "min_area": min_area, "merge_distance": merge_distance},
     }
     text = json.dumps(summary, indent=2, ensure_ascii=False)
-    logger.info("YEA Mask to Native BBoxes: %s", text)
+    logger.info("HUDKit Mask to Native BBoxes: %s", text)
     return bboxes, text
 
 

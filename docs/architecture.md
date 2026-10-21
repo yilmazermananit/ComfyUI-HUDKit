@@ -1,4 +1,4 @@
-# Architecture — ComfyUI-YEAHUD
+# Architecture — ComfyUI-HUDKit
 
 ## Three independent layers
 ```

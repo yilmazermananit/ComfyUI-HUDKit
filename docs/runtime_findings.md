@@ -1,4 +1,4 @@
-# Runtime Findings — ComfyUI-YEAHUD Milestone 1
+# Runtime Findings — ComfyUI-HUDKit Milestone 1
 
 > Bu doküman, renderer kodu yazılmadan **önce** gerçek ComfyUI kaynak kodundan
 > doğrulanan veri yapılarını içerir. Hiçbir yapı tahmin edilmemiştir; her madde
@@ -11,10 +11,10 @@
 |-----|-------|
 | Aktif ComfyUI çalıştırıcısı | **Comfy Desktop.app** (Electron, bootstrap-python 3.13) |
 | Çekirdek `main.py` (bu sabahki log) | `/Applications/ComfyUI.app/Contents/Resources/ComfyUI/main.py` (app güncellemesiyle silinmiş) |
-| `basePath` (custom_nodes/models/input/output/user) | `/Users/differenterman/Documents/ComfyUI` |
-| Python venv (çekirdeği çalıştıran) | `/Users/differenterman/Documents/ComfyUI/.venv/bin/python` → CPython 3.12.8 (uv) |
+| `basePath` (custom_nodes/models/input/output/user) | `<ComfyUI>` |
+| Python venv (çekirdeği çalıştıran) | `python` → CPython 3.12.8 (uv) |
 | venv paketleri | torch 2.7.0.dev, numpy 1.26.4, Pillow 11.0.0, MPS=True |
-| Referans kaynak klonu | `/Users/differenterman/yonder-hud-build/comfyui-ref` |
+| Referans kaynak klonu | `<ComfyUI-source>` |
 | **ComfyUI sürümü (referans)** | **`0.24.0`** (`comfyui_version.py`), HEAD `7d4194d` 2026-06-15 |
 
 > Not: Makinedeki `~/ComfyUI` (Aralık 2024) ve `~/comfyui` çok eski — SAM3 **yok**.
@@ -210,8 +210,8 @@ float(components.frame_rate), video.get_bit_depth())`.
 LoadVideo → VIDEO
    → GetVideoComponents → images(IMAGE) + audio(AUDIO) + fps(FLOAT)
 images → SAM3 Detect → masks(MASK) + bboxes(BOUNDING_BOX)
-images + masks + bboxes + asset PNG'leri → YEA HUD Renderer → images(IMAGE)
-YEA images + fps + audio → CreateVideo → VIDEO → SaveVideo
+images + masks + bboxes + asset PNG'leri → HUDKit Renderer → images(IMAGE)
+HUDKit images + fps + audio → CreateVideo → VIDEO → SaveVideo
 ```
 > Brief diyagramındaki tek "Video Segment (SAM3)" kutusu audio/fps **vermez**;
 > audio+fps `GetVideoComponents`'ten gelir. SAM3 yalnızca IMAGE alır, MASK+BBOX verir.
@@ -219,7 +219,7 @@ YEA images + fps + audio → CreateVideo → VIDEO → SaveVideo
 ## 7. VIDEO tipi (2. aşama wrapper için)
 
 io_type=`"VIDEO"`, `Type=VideoInput` (düz dict **DEĞİL** — soyut wrapper sınıf,
-`comfy_api/latest/_input/video_types.py`). Stage-2 `YEA HUD Video Renderer`:
+`comfy_api/latest/_input/video_types.py`). Stage-2 `HUDKit Video Renderer`:
 `video.get_components()` → images/audio/frame_rate al → images'i işle →
 `VideoFromComponents(VideoComponents(images=..., audio=..., frame_rate=...))` ile
 geri sar. MVP'de VIDEO **uydurulmaz**; IMAGE batch + GetVideoComponents/CreateVideo yolu kullanılır.
@@ -250,7 +250,7 @@ Doğrulanan V3 input API'leri (SAM3 + _io.py):
 
 Brief §5 yapısı korunur; kayıt katmanı V3/V1 ayrımıyla:
 ```
-ComfyUI-YEAHUD/
+ComfyUI-HUDKit/
 ├── __init__.py            # V3 comfy_entrypoint; comfy_api yoksa V1 NODE_CLASS_MAPPINGS fallback
 ├── pyproject.toml, README.md, LICENSE, requirements.txt   # Pillow, numpy (torch ComfyUI'dan)
 ├── nodes/                 # İNCE schema katmanı (V3 + v1_compat)

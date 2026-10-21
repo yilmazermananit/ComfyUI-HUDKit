@@ -1,4 +1,15 @@
-# Test Report — ComfyUI-YEAHUD
+# Test Report — ComfyUI-HUDKit
+
+## Public release validation — 2026-10-21
+
+The synthetic suite passes **587 tests** on Python 3.13, including seven new
+asset-directory containment cases (relative traversal, absolute paths, sibling
+prefixes, and symlink targets). Run `python -m pytest tests -q` from the repository
+root. The Python source/wheel distributions also build successfully, including the
+bundled font and its license. No live SAM3 checkpoint inference was rerun for this
+release; the live-model results below are historical June 2026 results.
+
+## Historical validation — June 2026
 
 Environment: ComfyUI 0.24.0 venv (Python 3.12.8, torch 2.7.0.dev, numpy 1.26.4,
 Pillow 11.0.0, MPS). `pytest` is not installed in this venv, so each file is also a

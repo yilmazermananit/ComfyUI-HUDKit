@@ -1,4 +1,4 @@
-"""Determinism + caching primitives for ComfyUI-YEAHUD.
+"""Determinism + caching primitives for ComfyUI-HUDKit.
 
 This module is schema-agnostic: it imports only the Python standard library and
 ``yea_hud.types``. It contains **no** ComfyUI / torch / PIL imports and does no

@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "comfyui-yeahud"
-version = "0.1.0"
+name = "comfyui-hudkit"
+version = "0.1.1"
 description = "Designed HUD video overlays from native SAM3 tracking. Consumes native SAM3_TRACK_DATA / BOUNDING_BOX / MASK and the user's transparent PNG frame & target assets to render stable-identity, captioned, color-coded HUD graphics. No third-party bbox bridge nodes."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -23,16 +23,14 @@ classifiers = [
 ]
 
 [project.urls]
-# REQUIRED by the Comfy Registry. Replace with the real repo before publishing.
-Repository = "https://github.com/yilmazermananit/ComfyUI-YEAHUD"
-"Bug Tracker" = "https://github.com/yilmazermananit/ComfyUI-YEAHUD/issues"
+Repository = "https://github.com/yilmazermananit/ComfyUI-HUDKit"
+"Bug Tracker" = "https://github.com/yilmazermananit/ComfyUI-HUDKit/issues"
 
 # --- Comfy Registry metadata (docs.comfy.org/registry/specifications) -------
 [tool.comfy]
-# PublisherId is the value after '@' on your registry.comfy.org profile.
-# This is a PLACEHOLDER — set it to your real PublisherId before `comfy node publish`.
+# Verify this PublisherId in the Comfy Registry before a registry release.
 PublisherId = "yilmazermananit"
-DisplayName = "ComfyUI-YEAHUD"
+DisplayName = "ComfyUI-HUDKit"
 # SAM3 native nodes + BOUNDING_BOX/SAM3_TRACK_DATA types landed in ComfyUI v0.20.1.
 requires-comfyui = ">=0.20.1"
 # Icon (<=400x400 square) / Banner (21:9) may be added as hosted URLs before publish.
@@ -42,3 +40,11 @@ requires-comfyui = ">=0.20.1"
 # (see .comfyignore for the Registry packaging excludes).
 packages = ["yea_hud", "nodes"]
 include-package-data = true
+
+[tool.setuptools.package-data]
+yea_hud = ["fonts/*.ttf", "fonts/*.txt", "fonts/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# ComfyUI's root entry point is a loader hook, not a pytest package initializer.
+addopts = "--confcutdir=tests"

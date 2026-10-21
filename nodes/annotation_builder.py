@@ -1,4 +1,4 @@
-"""YEA Annotation Builder — merge tracking + labels into one YEA_ANNOTATIONS.
+"""HUDKit Annotation Builder — merge tracking + labels into one YEA_ANNOTATIONS.
 
 Combines: a base annotation set derived from SAM3 track_data (generic group labels +
 stable namespaced ids), VLM responses (per-crop list reduced to one consensus label
@@ -13,9 +13,9 @@ import logging
 
 logger = logging.getLogger("YEAHUD.annotation_builder")
 
-DISPLAY_NAME = "YEA Annotation Builder"
+DISPLAY_NAME = "HUDKit Annotation Builder"
 NODE_ID = "YEAAnnotationBuilder"
-CATEGORY = "YEA/HUD/Annotation"
+CATEGORY = "HUDKit/Annotation"
 ANNOTATIONS_TYPE = "YEA_ANNOTATIONS"
 
 

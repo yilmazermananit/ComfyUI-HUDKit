@@ -1,4 +1,4 @@
-"""YEA Track Crop Extractor — representative crops per stable SAM3 track.
+"""HUDKit Track Crop Extractor — representative crops per stable SAM3 track.
 
 So an external VLM describes each track ONCE (from a few good crops) instead of
 captioning every frame. Scores frames per track by visible area, centeredness and
@@ -14,9 +14,9 @@ import logging
 
 logger = logging.getLogger("YEAHUD.crop_extractor")
 
-DISPLAY_NAME = "YEA Track Crop Extractor"
+DISPLAY_NAME = "HUDKit Track Crop Extractor"
 NODE_ID = "YEATrackCropExtractor"
-CATEGORY = "YEA/HUD/Annotation"
+CATEGORY = "HUDKit/Annotation"
 
 SELECTION_MODES = ("best", "largest", "sharpest", "most_centered", "multi_sample")
 _CROP_SIZE = 384

@@ -1,4 +1,4 @@
-"""YEA Inspect Bounding Boxes — debug node.
+"""HUDKit Inspect Bounding Boxes — debug node.
 
 Logs and returns a safe structural summary of a native BOUNDING_BOX value and
 passes the bboxes through unchanged. Use when a SAM3 / detection node's bbox
@@ -13,9 +13,9 @@ import logging
 
 logger = logging.getLogger("YEAHUD.inspect_bbox")
 
-DISPLAY_NAME = "YEA Inspect Bounding Boxes"
+DISPLAY_NAME = "HUDKit Inspect Bounding Boxes"
 NODE_ID = "YEAInspectBoundingBoxes"
-CATEGORY = "YEA/HUD"
+CATEGORY = "HUDKit"
 
 
 def run_inspect_bbox(bboxes=None, masks=None, max_frames: int = 3, max_dets: int = 10) -> str:
@@ -41,7 +41,7 @@ def run_inspect_bbox(bboxes=None, masks=None, max_frames: int = 3, max_dets: int
             summary["masks"] = {"error": repr(exc)}
 
     text = json.dumps(summary, indent=2, ensure_ascii=False, default=str)
-    logger.info("YEA Inspect Bounding Boxes:\n%s", text)
+    logger.info("HUDKit Inspect Bounding Boxes:\n%s", text)
     return text
 
 

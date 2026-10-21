@@ -1,4 +1,4 @@
-"""YEA HUD Asset Pack — collapse the renderer's 16 asset sockets into ONE input.
+"""HUDKit Asset Pack — collapse the renderer's 16 asset sockets into ONE input.
 
 Two ways to fill it, simplest first:
   * `folder`: a subfolder of ComfyUI's `input/` dir — every PNG is auto-loaded;
@@ -17,9 +17,9 @@ import os
 
 logger = logging.getLogger("YEAHUD.asset_pack")
 
-DISPLAY_NAME = "YEA HUD Asset Pack"
+DISPLAY_NAME = "HUDKit Asset Pack"
 NODE_ID = "YEAHUDAssetPack"
-CATEGORY = "YEA/HUD"
+CATEGORY = "HUDKit"
 ASSET_PACK_TYPE = "YEA_HUD_ASSET_PACK"
 
 
@@ -28,9 +28,9 @@ def _load_pair_from_file(path):
     import numpy as np
     import torch
     from PIL import Image
-    img = Image.open(path)
-    rgb = np.asarray(img.convert("RGB"), dtype=np.float32) / 255.0
-    alpha = np.asarray(img.convert("RGBA"), dtype=np.float32)[:, :, 3] / 255.0
+    with Image.open(path) as img:
+        rgb = np.asarray(img.convert("RGB"), dtype=np.float32) / 255.0
+        alpha = np.asarray(img.convert("RGBA"), dtype=np.float32)[:, :, 3] / 255.0
     return torch.from_numpy(rgb)[None], torch.from_numpy(1.0 - alpha)[None]
 
 
@@ -44,19 +44,28 @@ def _scan_folder(folder):
         base = folder_paths.get_input_directory()
     except Exception:
         return [], []
-    safe = os.path.normpath(folder).lstrip("/").replace("..", "")
-    root = os.path.join(base, safe)
+    base = os.path.realpath(base)
+    root = os.path.realpath(os.path.join(base, folder))
+    try:
+        if os.path.isabs(folder) or os.path.commonpath([base, root]) != base:
+            logger.warning("Asset folder must stay inside ComfyUI's input directory.")
+            return [], []
+    except ValueError:
+        return [], []
     if not os.path.isdir(root):
-        logger.warning("YEA Asset Pack: folder %r not found under input dir.", folder)
+        logger.warning("HUDKit Asset Pack: folder %r not found under input dir.", folder)
         return [], []
     frames, targets = [], []
     for name in sorted(os.listdir(root)):
         if not name.lower().endswith((".png", ".webp")):
             continue
+        path = os.path.realpath(os.path.join(root, name))
+        if os.path.commonpath([base, path]) != base or not os.path.isfile(path):
+            continue
         try:
-            pair = _load_pair_from_file(os.path.join(root, name))
+            pair = _load_pair_from_file(path)
         except Exception as exc:  # noqa: BLE001 — a bad file must not break the graph
-            logger.warning("YEA Asset Pack: skipped %s (%r)", name, exc)
+            logger.warning("HUDKit Asset Pack: skipped %s (%r)", name, exc)
             continue
         (targets if "target" in name.lower() else frames).append(pair)
     return frames[:6], targets[:2]
@@ -108,7 +117,7 @@ def run_asset_pack(folder="", manual=None, solid_opacity=0.0):
     frame_pairs = [_handle_solid(p, solid_opacity) for p in frame_pairs]
     n_f = sum(p is not None for p in frame_pairs)
     n_t = sum(p is not None for p in target_pairs)
-    logger.info("YEA HUD Asset Pack: %d frame + %d target assets (solid_opacity=%.2f).",
+    logger.info("HUDKit Asset Pack: %d frame + %d target assets (solid_opacity=%.2f).",
                 n_f, n_t, solid_opacity)
     return {"frame_pairs": frame_pairs, "target_pairs": target_pairs,
             "n_frame_assets": n_f, "n_target_assets": n_t}

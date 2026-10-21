@@ -4,11 +4,11 @@ Runnable two ways:
 
 * as pytest::
 
-      /Users/differenterman/Documents/ComfyUI/.venv/bin/python -m pytest tests/test_palette.py -q
+      python -m pytest tests/test_palette.py -q
 
 * as a plain script (no pytest required)::
 
-      /Users/differenterman/Documents/ComfyUI/.venv/bin/python tests/test_palette.py
+      python tests/test_palette.py
 
 The script runner executes every ``test_*`` function, prints a summary and exits
 non-zero on any failure. No ComfyUI, no network, no model files, no file writes.

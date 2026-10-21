@@ -24,7 +24,7 @@ from .track_crop_extractor import run_track_crop_extractor, DISPLAY_NAME as CE_N
 from .detailed_label_prompt import run_detailed_label_prompt, DISPLAY_NAME as LP_NAME, NODE_ID as LP_ID
 from .asset_pack import run_asset_pack, DISPLAY_NAME as AP_NAME, NODE_ID as AP_ID
 
-ANN_CAT = "YEA/HUD/Annotation"
+ANN_CAT = "HUDKit/Annotation"
 _F = lambda v: ("FLOAT", {"default": v, "min": 0.0, "max": 1.0, "step": 0.01})
 LABEL_LENGTH_MODES = ["single_line", "two_line", "truncate", "adaptive"]
 COLOR_MODES = ["track_random", "category_based", "source_based", "fixed_palette", "annotation_override"]

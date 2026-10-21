@@ -7,7 +7,7 @@ run SAM3 and the box does NOT follow the real subject.
 
 The REAL SAM3 integration test = run `examples/real_video_sam3_workflow.json` in ComfyUI
 >=0.20.1 with `models/checkpoints/sam3.1_multiplex_fp16.safetensors` (Comfy-Org/sam3.1):
-Load Video -> SAM3 Video Track -> YEA HUD Renderer -> Create Video. Replace SRC with any clip.
+Load Video -> SAM3 Video Track -> HUDKit Renderer -> Create Video. Replace SRC with any clip.
 """
 from __future__ import annotations
 
@@ -30,8 +30,7 @@ from PIL import Image
 from nodes.hud_renderer import run_hud_renderer
 from nodes.asset_pack import run_asset_pack, _load_pair_from_file
 
-SRC = os.path.expanduser(
-    "~/Downloads/magnific_langr-adam-topa-vursun-sadece-sound-fx-olsun-mzik-_kling_4K_21-9_24fps_8724.mp4")
+SRC = os.path.expanduser(os.environ.get("HUDKIT_INPUT_VIDEO", ""))
 OUT = os.path.join(_HERE, "renderer_smoketest_output.mp4")
 TARGET_W = 1280
 ASSET_DIR = os.path.join(_HERE, "assets")
@@ -78,7 +77,7 @@ def standin_track_data(B, H, W, hm=180, wm=320):
 
 def main():
     if not os.path.exists(SRC):
-        print("SRC video not found:", SRC); return 1
+        print("Set HUDKIT_INPUT_VIDEO to a local input video."); return 1
     frames, fps, W, H = decode(SRC, TARGET_W)
     B = frames.shape[0]
     print(f"decoded {B} frames {W}x{H} @ {fps}fps")

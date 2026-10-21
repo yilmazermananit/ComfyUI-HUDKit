@@ -168,7 +168,7 @@ def mask_to_detections(mask_hw, frame_index:int, *, threshold:float, min_area:in
     # optional cv2 fast path if importable). merge components whose boxes are within merge_distance.
     # drop area<min_area. returns Detections (xyxy) with source_index = component order.
 def masks_to_native_bboxes(mask, threshold:float, min_area:int, merge_distance:int) -> list[list[dict]]
-    # for the 'YEA Mask to Native BBoxes' node: returns native BOUNDING_BOX value
+    # for the 'HUDKit Mask to Native BBoxes' node: returns native BOUNDING_BOX value
     # (list[list[{"x","y","width","height","score":1.0}]]) — abs-pixel xywh. NO custom type.
 ```
 
@@ -248,7 +248,7 @@ def composite_rgba_over(base_rgb_np, overlay_rgba_np) -> "np.ndarray"  # straigh
 
 ### Test rules (every `tests/test_<module>.py`)
 - Use plain `assert` + a `if __name__=='__main__'` runner OR pytest-style `def test_*`.
-- Run with: `/Users/differenterman/Documents/ComfyUI/.venv/bin/python -m pytest tests/test_<module>.py -q`
+- Run with: `python -m pytest tests/test_<module>.py -q`
   (pytest is in the venv; if not, the file must also run via `python tests/test_<module>.py`).
 - Cover the brief §25 cases relevant to the module (e.g. bbox: all the §25.1 shapes;
   alpha: §25.2; tracker: §25.3; compositor: §25.4).

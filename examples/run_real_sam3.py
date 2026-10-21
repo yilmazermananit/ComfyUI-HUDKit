@@ -1,14 +1,15 @@
 """REAL SAM3 integration test (headless).
 
 Runs ComfyUI's native SAM3 Video Track on a real decoded clip to produce REAL
-per-frame masks + persistent-object SAM3_TRACK_DATA, then feeds that into the YEA HUD
+per-frame masks + persistent-object SAM3_TRACK_DATA, then feeds that into the HUDKit
 Renderer with the user's assets (Tektur, track_random) and exports an MP4 with the
 original audio + fps. Saves first/mid/last PNGs.
 
 Requires: reference ComfyUI >=0.20.1 clone with native SAM3, the venv (torch), and
 models/checkpoints/sam3.1_multiplex_fp16.safetensors. Slow on MPS — keep N_FRAMES small.
 
-Run:  /path/to/.venv/bin/python examples/run_real_sam3.py
+Run with your ComfyUI Python environment:
+  COMFYUI_PATH=/path/to/ComfyUI HUDKIT_INPUT_VIDEO=/path/to/input.mp4 python examples/run_real_sam3.py
 """
 from __future__ import annotations
 
@@ -20,11 +21,10 @@ from fractions import Fraction
 
 os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")  # let unsupported MPS ops fall back to CPU
 
-REF = "/Users/differenterman/yonder-hud-build/comfyui-ref"
-PROJ = "/Users/differenterman/Documents/ComfyUI/custom_nodes/ComfyUI-YEAHUD"
-MODELS = "/Users/differenterman/Documents/ComfyUI/models"
-SRC = os.path.expanduser(
-    "~/Downloads/magnific_langr-adam-topa-vursun-sadece-sound-fx-olsun-mzik-_kling_4K_21-9_24fps_8724.mp4")
+PROJ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REF = os.path.abspath(os.path.expanduser(os.environ["COMFYUI_PATH"])) if os.environ.get("COMFYUI_PATH") else ""
+MODELS = os.path.expanduser(os.environ.get("COMFYUI_MODELS_PATH", os.path.join(REF, "models")))
+SRC = os.path.expanduser(os.environ.get("HUDKIT_INPUT_VIDEO", ""))
 CKPT = "sam3.1_multiplex_fp16.safetensors"
 PROMPT = "person"
 N_FRAMES = 24          # keep small on MPS
@@ -34,8 +34,6 @@ OUT = os.path.join(PROJ, "examples", "real_sam3_output.mp4")
 # ref clone first so `import nodes` / comfy / comfy_extras resolve to ComfyUI core;
 # PROJ also on path so `import yea_hud` (our business pkg) resolves.
 sys.path.insert(0, PROJ)
-sys.path.insert(0, REF)
-os.chdir(REF)
 
 
 def _load_file_module(name, relpath):
@@ -82,6 +80,12 @@ def decode(src, n, target_w):
 
 
 def main():
+    if not REF or not os.path.isfile(os.path.join(REF, "nodes.py")):
+        print("Set COMFYUI_PATH to a ComfyUI source directory with native SAM3 support."); return 2
+    if not SRC or not os.path.isfile(SRC):
+        print("Set HUDKIT_INPUT_VIDEO to a local input video."); return 2
+    sys.path.insert(0, REF)
+    os.chdir(REF)
     ckpt_path = os.path.join(MODELS, "checkpoints", CKPT)
     if not os.path.exists(ckpt_path):
         print("CHECKPOINT MISSING:", ckpt_path); return 2
@@ -101,7 +105,7 @@ def main():
     cache = os.path.join(PROJ, "examples", ".sam3_cache.pt")
     if os.path.exists(cache):
         print("loading cached frames + REAL SAM3 track_data…")
-        blob = torch.load(cache, weights_only=False)
+        blob = torch.load(cache, weights_only=True)
         frames, fps, W, H, track_data = blob["frames"], blob["fps"], blob["W"], blob["H"], blob["track_data"]
     else:
         frames, fps, W, H = decode(SRC, N_FRAMES, TARGET_W)

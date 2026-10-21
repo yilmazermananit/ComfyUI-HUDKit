@@ -1,4 +1,4 @@
-"""ComfyUI-YEAHUD — node registration entry point.
+"""ComfyUI-HUDKit — node registration entry point.
 
 Prefers the V3 schema (``comfy_api`` + ``comfy_entrypoint``), exactly like the
 native SAM3 nodes. If ``comfy_api`` is unavailable (older ComfyUI), falls back to
@@ -60,9 +60,9 @@ if _HAS_V3:
         return YEAHUDExtension()
 
     __all__ += ["comfy_entrypoint"]
-    logger.info("ComfyUI-YEAHUD: registered %d V3 nodes (category YEA/HUD).", len(_NODES))
+    logger.info("ComfyUI-HUDKit: registered %d V3 nodes (category HUDKit).", len(_NODES))
 else:
     from .nodes.v1_compat import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS  # noqa: F401
 
     __all__ += ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
-    logger.info("ComfyUI-YEAHUD: comfy_api V3 unavailable; registered V1 NODE_CLASS_MAPPINGS.")
+    logger.info("ComfyUI-HUDKit: comfy_api V3 unavailable; registered V1 NODE_CLASS_MAPPINGS.")
